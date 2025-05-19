@@ -18,3 +18,7 @@ npm run dev
 npm run build
 npm run preview
 ```
+
+## 架構
+
+[structure.md](./structure.md)
