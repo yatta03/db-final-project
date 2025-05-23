@@ -7,6 +7,8 @@
 (下載好 node.js)
 
 ```
+cd app
+
 # 下載套件
 # 初次跑專案/有人加新套件讓package.json變動就要執行
 npm install

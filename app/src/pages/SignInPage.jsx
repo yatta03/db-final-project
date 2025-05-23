@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useSupabase } from "../context/SupabaseProvider";
 import useForm from "../hooks/useForm";
-import AuthForm from "../components/signInUp/AuthForm";
+import AuthForm from "../components/AuthForm";
 import { validateSingUp } from "../utils/validators";
 
 export default function SignInPage() {
