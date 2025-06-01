@@ -15,7 +15,7 @@ export default function SignInPage() {
 
     const { error } = await supabase.auth.signInWithPassword(form);
     if (error) alert(error.message);
-    else navigate("/user");
+    else navigate("/role");
   };
 
   const fields = [
@@ -26,14 +26,14 @@ export default function SignInPage() {
   const handleTestSignIn = async () => {
     const { error } = await supabase.auth.signInWithPassword({ email: "test@gmail.com", password: "abcdef" });
     if (error) alert(error.message);
-    else navigate("/user");
+    else navigate("/role");
   };
 
   if (session?.access_token)
     return (
       <>
         <p>you've already logged in</p>
-        <Link to={"/user"}>User</Link>
+        <Link to={"/role"}>select role</Link>
       </>
     );
   else

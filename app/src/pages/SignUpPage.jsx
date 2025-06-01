@@ -15,7 +15,7 @@ export default function SignUpPage() {
 
     const { error } = await supabase.auth.signUp({ ...form, options: { data: { name: form.name } } });
     if (error) alert(error.message);
-    else navigate("/user");
+    else navigate("/role");
   };
 
   const fields = [
@@ -28,7 +28,7 @@ export default function SignUpPage() {
     return (
       <>
         <p>you've already logged in</p>
-        <Link to={"/user"}>user page</Link>
+        <Link to={"/role"}>select role</Link>
       </>
     );
   } else {

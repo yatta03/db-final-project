@@ -5,7 +5,7 @@ import "./App.css";
 import Home from "./pages/Home";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
-import UserPage from "./pages/UserPage";
+import RolePage from "./pages/RolePage";
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/user/signIn" element={<SignInPage />} />
             <Route path="/user/signUp" element={<SignUpPage />} />
-            <Route path="/user" element={<UserPage />} />
+            <Route path="/role" element={<RolePage />} />
           </Routes>
         </Router>
       </SupabaseProvider>
