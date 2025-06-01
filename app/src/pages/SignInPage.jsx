@@ -24,7 +24,7 @@ export default function SignInPage() {
   ];
 
   const handleTestSignIn = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email: "bbb@gmail", password: "abcdef" });
+    const { error } = await supabase.auth.signInWithPassword({ email: "test@gmail.com", password: "abcdef" });
     if (error) alert(error.message);
     else navigate("/user");
   };
