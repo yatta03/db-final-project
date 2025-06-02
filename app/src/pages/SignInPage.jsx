@@ -3,6 +3,7 @@ import { useSupabase } from "../context/SupabaseProvider";
 import useForm from "../hooks/useForm";
 import AuthForm from "../components/AuthForm";
 import { validateSingUp } from "../utils/validators";
+import "./SignInPage.css";
 
 export default function SignInPage() {
   const { form, errors, handleChange, validateForm } = useForm({ email: "", password: "" }, validateSingUp);
@@ -39,10 +40,14 @@ export default function SignInPage() {
   else
     return (
       <>
-        <h2>Sign in</h2>
-        <AuthForm fields={fields} onSubmit={handleSignIn} submitText="sign in" />
-        <button onClick={handleTestSignIn}>登入測試帳號</button>
-        <Link to={"/user/signUp"}>Sign up</Link>
+        <div className="auth-signin">
+          <button className="auth-alt-button" onClick={handleTestSignIn}>
+            登入測試帳號
+          </button>
+          <h2>Sign in</h2>
+          <AuthForm fields={fields} onSubmit={handleSignIn} submitText="sign in" />
+          <Link to={"/user/signUp"}>Sign up</Link>
+        </div>
       </>
     );
 }

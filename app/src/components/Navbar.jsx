@@ -1,6 +1,7 @@
 // navbar: 放頁面共用的元件(sign out button...)
 import { useNavigate } from "react-router-dom";
 import { useSupabase } from "../context/SupabaseProvider";
+import "./Navbar.css";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav>
+      <nav className="app-navbar">
         {session?.access_token ? (
           <>
             <button onClick={handleSignOut}>Sign Out</button>

@@ -34,9 +34,11 @@ export default function SignUpPage() {
   } else {
     return (
       <>
-        <h2>sign up</h2>
-        <AuthForm fields={fields} onSubmit={handleSignUp} submitText="sign up" />
-        <Link to={"/user/signIn"}>back to sign in</Link>
+        <div className="auth-signin">
+          <h2>sign up</h2>
+          <AuthForm fields={fields} onSubmit={handleSignUp} submitText="sign up" />
+          <Link to={"/user/signIn"}>back to sign in</Link>
+        </div>
       </>
     );
   }
