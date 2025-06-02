@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { SupabaseProvider } from "./context/SupabaseProvider";
 import "./App.css";
 
+import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -12,6 +13,7 @@ function App() {
     <>
       <SupabaseProvider>
         <Router>
+          <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/user/signIn" element={<SignInPage />} />
