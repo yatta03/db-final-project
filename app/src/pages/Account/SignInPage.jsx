@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useSupabase } from "../context/SupabaseProvider";
-import useForm from "../hooks/useForm";
-import AuthForm from "../components/AuthForm";
-import { validateSingUp } from "../utils/validators";
+import { useSupabase } from "../../context/SupabaseProvider";
+import useForm from "../../hooks/useForm";
+import AuthForm from "../../components/AuthForm/AuthForm";
+import { validateSingUp } from "../../utils/validators";
 import "./SignInPage.css";
 
 export default function SignInPage() {
@@ -24,8 +24,12 @@ export default function SignInPage() {
     { name: "password", label: "Password", type: "password", value: form.password, onChange: handleChange("password"), error: errors.password },
   ];
 
-  const handleTestSignIn = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email: "test@gmail.com", password: "abcdef" });
+  const handleTestSignIn = async (account) => {
+    const accountList = {
+      user1: { email: "test@gmail.com", password: "abcdef" },
+      user2: { email: "agent@gmail.com", password: "agent1" },
+    };
+    const { error } = await supabase.auth.signInWithPassword({ email: accountList[account].email, password: accountList[account].password });
     if (error) alert(error.message);
     else navigate("/role");
   };
@@ -41,8 +45,11 @@ export default function SignInPage() {
     return (
       <>
         <div className="auth-signin">
-          <button className="auth-alt-button" onClick={handleTestSignIn}>
-            登入測試帳號
+          <button className="auth-alt-button" onClick={() => handleTestSignIn("user1")}>
+            登入測試帳號1
+          </button>
+          <button className="auth-alt-button" onClick={() => handleTestSignIn("user2")}>
+            登入測試帳號2
           </button>
           <h2>Sign in</h2>
           <AuthForm fields={fields} onSubmit={handleSignIn} submitText="sign in" />

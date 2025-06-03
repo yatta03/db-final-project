@@ -2,11 +2,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import { SupabaseProvider } from "./context/SupabaseProvider";
 import "./App.css";
 
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/Home";
-import SignInPage from "./pages/SignInPage";
-import SignUpPage from "./pages/SignUpPage";
+import SignInPage from "./pages/Account/SignInPage";
+import SignUpPage from "./pages/Account/SignUpPage";
 import RolePage from "./pages/RolePage";
+import OrderDetailPage from "./pages/OrderDetailPage";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
             <Route path="/user/signIn" element={<SignInPage />} />
             <Route path="/user/signUp" element={<SignUpPage />} />
             <Route path="/role" element={<RolePage />} />
+            <Route path="/buyer/order/:orderId" element={<OrderDetailPage role={"buyer"} />} />
+            <Route path="/agent/order/:orderId" element={<OrderDetailPage role={"agent"} />} />
           </Routes>
         </Router>
       </SupabaseProvider>

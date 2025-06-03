@@ -11,7 +11,7 @@
 }
 
 .auth-signin .auth-alt-button {
-  margin-bottom: 1rem;
+  margin: .5rem 1rem;
   background: #444;
   color: #ccc;
   padding: 0.5rem 1rem;

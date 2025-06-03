@@ -1,6 +1,6 @@
 // navbar: 放頁面共用的元件(sign out button...)
 import { useNavigate } from "react-router-dom";
-import { useSupabase } from "../context/SupabaseProvider";
+import { useSupabase } from "../../context/SupabaseProvider";
 import "./Navbar.css";
 
 export default function Navbar() {
