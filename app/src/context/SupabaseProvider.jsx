@@ -1,9 +1,10 @@
 // Usage:
 // import { useSupabase } from "pathTo/SupabaseProvider";
-// const {supabase, session} = useSupabase();
+// const {supabase, session, userProfile} = useSupabase();
 
 // access token 在 session.access_token
 // 從 session.user 也能拿到 user 資訊
+// 從 userProfile 拿到 users 的基本資料, name,...
 
 import { createContext, useContext, useState, useRef, useEffect } from "react";
 import { supabase } from "../utils/supaClient";
@@ -12,6 +13,8 @@ const SupabaseContext = createContext(null);
 
 export function SupabaseProvider({ children }) {
   const [session, setSession] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+
   // control the reset passwrod prompt to show only once
   const hasPrompted = useRef(false);
 
@@ -23,10 +26,24 @@ export function SupabaseProvider({ children }) {
       } = await supabase.auth.getSession();
 
       // console.log(session);
-      if (session) setSession(session);
+      if (session) {
+        setSession(session);
+        // fetch user data
+        await fetchUserProfile(session.user.id);
+      }
       if (error) console.log(error.message);
     } catch (err) {
       console.log("error retrieve session: ", err);
+    }
+  }
+
+  async function fetchUserProfile(userId) {
+    const { data, error } = await supabase.from("users").select("*").eq("userid", userId).single();
+    if (error) {
+      console.error("Failed to fetch user profile:", error.message);
+      setUserProfile(null);
+    } else {
+      setUserProfile(data);
     }
   }
 
@@ -79,7 +96,7 @@ export function SupabaseProvider({ children }) {
     };
   }, []);
 
-  return <SupabaseContext.Provider value={{ supabase, session }}>{children}</SupabaseContext.Provider>;
+  return <SupabaseContext.Provider value={{ supabase, session, userProfile }}>{children}</SupabaseContext.Provider>;
 }
 
 export function useSupabase() {
