@@ -8,6 +8,7 @@ import SignInPage from "./pages/Account/SignInPage";
 import SignUpPage from "./pages/Account/SignUpPage";
 import RolePage from "./pages/RolePage";
 import OrderDetailPage from "./pages/OrderDetail/OrderDetailPage";
+import AgentProfilePage from "./pages/AgentProfilePage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/role" element={<RolePage />} />
             <Route path="/buyer/order/:orderId" element={<OrderDetailPage role={"buyer"} />} />
             <Route path="/agent/order/:orderId" element={<OrderDetailPage role={"agent"} />} />
+            <Route path="/agent/profile" element={<AgentProfilePage />} />
           </Routes>
         </Router>
       </SupabaseProvider>
