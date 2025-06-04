@@ -10,7 +10,7 @@ export default function Quotes({ quotes, curUserId, orderOwnerId, onRemove, onRe
 
         return (
           <div key={(q.bidder_name, q.quotation_date_time)}>
-            <p>報價者：{q.bidder_name}</p>
+            <p>+ 報價者：{q.bidder_name}</p>
             <p>金額：{q.price}</p>
             <p>時間：{q.quotation_date_time}</p>
             <p>狀態：{q.acceptance_status}</p>

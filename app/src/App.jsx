@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import SignInPage from "./pages/Account/SignInPage";
 import SignUpPage from "./pages/Account/SignUpPage";
 import RolePage from "./pages/RolePage";
-import OrderDetailPage from "./pages/OrderDetailPage";
+import OrderDetailPage from "./pages/OrderDetail/OrderDetailPage";
 
 function App() {
   return (

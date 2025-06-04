@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useSupabase } from "../context/SupabaseProvider";
+import { useSupabase } from "../../context/SupabaseProvider";
 
-import OrderDetail from "../components/OrderDetail/OrderDetail";
-import Quotes from "../components/OrderDetail/Quotes";
-import QuotePost from "../components/OrderDetail/QuotePost";
+import OrderDetail from "../../components/OrderDetail/OrderDetail";
+import OrderStatus from "../../components/OrderDetail/OrderStatus";
+import Quotes from "../../components/OrderDetail/Quotes";
+import QuotePost from "../../components/OrderDetail/QuotePost";
+import "./OrderDetail.css";
 
 export default function OrderDetailPage({ role }) {
   const { orderId } = useParams();
@@ -41,7 +43,10 @@ export default function OrderDetailPage({ role }) {
       console.log(error);
       return false;
     }
-    setOrderData((prev) => ({ ...prev, quotes: [...prev.quotes, { ...data, bidder_name: userProfile.name }] }));
+    setOrderData((prev) => ({
+      ...prev,
+      quotes: prev.quotes.length > 0 ? [...prev.quotes, { ...data, bidder_name: userProfile.name }] : [{ ...data, bidder_name: userProfile.name }],
+    }));
     return true;
   };
 
@@ -110,23 +115,34 @@ export default function OrderDetailPage({ role }) {
   if (error) return <p>{JSON.stringify(error)}</p>;
 
   return (
-    <>
-      <OrderDetail orderData={orderData} curUserId={session?.user.id} role={role} />
-      <h2>報價</h2>
-      <Quotes
-        quotes={orderData.quotes}
-        curUserId={session?.user.id}
-        orderOwnerId={orderData.customer_userid}
-        onRemove={removeQuote}
-        onReject={rejectQuote}
-        onAccept={acceptQuote}
-      />
+    <div className="order-detail-page">
+      <div className="top-section">
+        <OrderDetail orderData={orderData} />
+      </div>
 
-      {role == "agent" && orderData.is_order_accepted == false && orderData.customer_userid != session?.user.id && (
-        <>
-          <QuotePost postQuote={postQuote} />
-        </>
-      )}
-    </>
+      <div className="bottom-section">
+        <div className="left-column">
+          <OrderStatus orderData={orderData} curUserId={session?.user.id} role={role} />
+        </div>
+
+        <div className="right-column">
+          <h3>{orderData?.is_order_accepted ? "報價歷史" : "報價"}</h3>
+          {role == "agent" && orderData.is_order_accepted == false && orderData.customer_userid != session?.user.id && (
+            <>
+              <QuotePost postQuote={postQuote} />
+            </>
+          )}
+
+          <Quotes
+            quotes={orderData.quotes}
+            curUserId={session?.user.id}
+            orderOwnerId={orderData.customer_userid}
+            onRemove={removeQuote}
+            onReject={rejectQuote}
+            onAccept={acceptQuote}
+          />
+        </div>
+      </div>
+    </div>
   );
 }
