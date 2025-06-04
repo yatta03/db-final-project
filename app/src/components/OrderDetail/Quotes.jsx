@@ -1,11 +1,9 @@
-export default function Quotes({ quotes, curUserId, onRemove }) {
+export default function Quotes({ quotes, curUserId, orderOwnerId, onRemove, onReject, onAccept }) {
   if (!quotes || quotes.length == 0) return <p>無報價</p>;
 
   return (
     <>
       {/* todo: if complete, mark only the accepted one */}
-      {/* tode: if is order owner and not accept, show accept/reject button */}
-      {/* agent && sort out owned quote, if not accept, show remove btn*/}
       {quotes.map((q) => {
         const isOwner = q.user_id === curUserId;
         const isPending = q.acceptance_status === "waiting";
@@ -18,6 +16,13 @@ export default function Quotes({ quotes, curUserId, onRemove }) {
             <p>狀態：{q.acceptance_status}</p>
 
             {isOwner && isPending && <button onClick={() => onRemove(q)}>撤銷報價</button>}
+
+            {orderOwnerId == curUserId && isPending && (
+              <>
+                <button onClick={() => onAccept(q)}>接受</button>
+                <button onClick={() => onReject(q)}>拒絕</button>
+              </>
+            )}
           </div>
         );
       })}

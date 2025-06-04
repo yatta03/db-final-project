@@ -66,6 +66,40 @@ export default function OrderDetailPage({ role }) {
     }));
   };
 
+  const rejectQuote = async (quote) => {
+    const { user_id, quotation_date_time } = quote;
+    const { error } = await supabase
+      .from("quotes")
+      .update({ acceptance_status: "rejected" })
+      .eq("user_id", user_id)
+      .eq("order_id", orderData.order_id)
+      .eq("quotation_date_time", quotation_date_time);
+    if (error) console.error("Reject failed:", error);
+    else {
+      // update quote status
+      setOrderData((prev) => ({
+        ...prev,
+        quotes: prev.quotes.map((q) => (Object.is(q.user_id, user_id) && q.quotation_date_time === quotation_date_time ? { ...q, acceptance_status: "rejected" } : q)),
+      }));
+    }
+  };
+
+  const acceptQuote = async (quote) => {
+    const { user_id, quotation_date_time, price } = quote;
+    const { error } = await supabase.rpc("accept_quote", {
+      p_order_id: orderData.order_id,
+      p_user_id: user_id,
+      p_quotation_date_time: quotation_date_time,
+      p_amount: price,
+    });
+    if (error) {
+      console.error("Accept failed:", error);
+      return;
+    }
+
+    await getOrderData(orderId);
+  };
+
   useEffect(() => {
     if (orderId) {
       getOrderData(orderId);
@@ -79,7 +113,14 @@ export default function OrderDetailPage({ role }) {
     <>
       <OrderDetail orderData={orderData} curUserId={session?.user.id} role={role} />
       <h2>報價</h2>
-      <Quotes quotes={orderData.quotes} curUserId={session?.user.id} onRemove={removeQuote} />
+      <Quotes
+        quotes={orderData.quotes}
+        curUserId={session?.user.id}
+        orderOwnerId={orderData.customer_userid}
+        onRemove={removeQuote}
+        onReject={rejectQuote}
+        onAccept={acceptQuote}
+      />
 
       {role == "agent" && orderData.is_order_accepted == false && orderData.customer_userid != session?.user.id && (
         <>
