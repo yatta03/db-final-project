@@ -11,6 +11,7 @@ import OrderDetailPage from "./pages/OrderDetail/OrderDetailPage";
 import AgentProfilePage from "./pages/agent/AgentProfilePage";
 import AgentAcceptedOrdersPage from "./pages/agent/AgentAcceptedOrdersPage";
 import AgentOrderDetailPage from "./pages/agent/AgentOrderDetailPage";
+import AgentQuotedOrdersPage from "./pages/agent/AgentQuotedOrdersPage";
 
 function App() {
   return (
@@ -23,10 +24,13 @@ function App() {
             <Route path="/user/signIn" element={<SignInPage />} />
             <Route path="/user/signUp" element={<SignUpPage />} />
             <Route path="/role" element={<RolePage />} />
-            <Route path="/buyer/order/:orderId" element={<OrderDetailPage role={"buyer"} />} />
+            <Route path="/buyer/browse/order/:orderId" element={<OrderDetailPage role={"buyer"} />} />
+            <Route path="/agent/browse/order/:orderId" element={<OrderDetailPage role={"agent"} />} />
+
             <Route path="/agent/order/:orderId" element={<AgentOrderDetailPage />} />
             <Route path="/agent/profile" element={<AgentProfilePage />} />
             <Route path="/agent/accepted-orders" element={<AgentAcceptedOrdersPage />} />
+            <Route path="/agent/quoted-orders" element={<AgentQuotedOrdersPage />} />
           </Routes>
         </Router>
       </SupabaseProvider>
