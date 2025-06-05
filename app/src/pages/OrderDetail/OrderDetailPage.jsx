@@ -45,7 +45,7 @@ export default function OrderDetailPage({ role }) {
     }
     setOrderData((prev) => ({
       ...prev,
-      quotes: prev.quotes.length > 0 ? [...prev.quotes, { ...data, bidder_name: userProfile.name }] : [{ ...data, bidder_name: userProfile.name }],
+      quotes: prev.quotes?.length > 0 ? [...prev.quotes, { ...data, bidder_name: userProfile.name }] : [{ ...data, bidder_name: userProfile.name }],
     }));
     return true;
   };
@@ -126,21 +126,27 @@ export default function OrderDetailPage({ role }) {
         </div>
 
         <div className="right-column">
-          <h3>{orderData?.is_order_accepted ? "報價歷史" : "報價"}</h3>
-          {role == "agent" && orderData.is_order_accepted == false && orderData.customer_userid != session?.user.id && (
-            <>
-              <QuotePost postQuote={postQuote} />
-            </>
-          )}
+          <div className="status-item">
+            <h3>{orderData?.is_order_accepted ? "報價歷史" : "報價"}</h3>
+            <div className="quote-form">
+              {role == "agent" && orderData.is_order_accepted == false && orderData.customer_userid != session?.user.id && (
+                <>
+                  <QuotePost postQuote={postQuote} />
+                </>
+              )}
+            </div>
 
-          <Quotes
-            quotes={orderData.quotes}
-            curUserId={session?.user.id}
-            orderOwnerId={orderData.customer_userid}
-            onRemove={removeQuote}
-            onReject={rejectQuote}
-            onAccept={acceptQuote}
-          />
+            <div className="quote-list">
+              <Quotes
+                quotes={orderData.quotes}
+                curUserId={session?.user.id}
+                orderOwnerId={orderData.customer_userid}
+                onRemove={removeQuote}
+                onReject={rejectQuote}
+                onAccept={acceptQuote}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
