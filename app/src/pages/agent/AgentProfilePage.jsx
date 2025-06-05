@@ -103,7 +103,7 @@ export default function AgentProfilePage() {
 
   const pageStyle = {
     maxWidth: '700px',
-    margin: '3rem auto',
+    margin: '1rem auto',
     padding: '2.5rem',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     backgroundColor: '#ffffff',

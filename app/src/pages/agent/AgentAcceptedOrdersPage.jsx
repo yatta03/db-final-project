@@ -61,7 +61,7 @@ export default function AgentAcceptedOrdersPage() {
 
   const pageStyle = {
     maxWidth: '900px',
-    margin: '3rem auto',
+    margin: '1rem auto',
     padding: '2.5rem',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     backgroundColor: '#ffffff',
@@ -126,8 +126,15 @@ export default function AgentAcceptedOrdersPage() {
     color: 'inherit',
   };
   
+  const orderDetailsContainerStyle = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '1rem',
+    alignItems: 'center',
+    marginTop: '0.5rem',
+  };
+  
   const orderDetailStyle = {
-    marginBottom: '0.5rem',
     color: '#495057',
   };
   
@@ -169,13 +176,15 @@ export default function AgentAcceptedOrdersPage() {
               }}
             >
               <Link to={`/agent/order/${order.order_id}`} style={orderLinkStyle}>
-                <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
-                <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
-                <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單狀態：</span>{order.order_status || 'N/A'}</p>
-                <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
-                {order.amount !== null && order.amount !== undefined && (
-                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>¥{order.amount}</p>
-                )}
+                <h3 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
+                <div style={orderDetailsContainerStyle}>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單狀態：</span>{order.order_status || 'N/A'}</p>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
+                  {order.amount !== null && order.amount !== undefined && (
+                    <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>¥{order.amount}</p>
+                  )}
+                </div>
               </Link>
             </li>
           ))}
