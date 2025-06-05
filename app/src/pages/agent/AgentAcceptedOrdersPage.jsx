@@ -1,0 +1,186 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useSupabase } from '../../context/SupabaseProvider'; // Adjusted import path
+
+export default function AgentAcceptedOrdersPage() {
+  const { supabase, session } = useSupabase();
+  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState([]);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [activeTab, setActiveTab] = useState('accepted-orders');
+
+  useEffect(() => {
+    const fetchAcceptedOrders = async () => {
+      if (!session?.user) {
+        setMessage({ type: 'error', text: '用戶未登入' });
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setMessage({ type: '', text: '' });
+      try {
+        const { data, error } = await supabase
+          .from('orders')
+          .select(`
+            order_id,
+            order_status,
+            created_at,
+            amount,
+            customer:users!orders_customer_userid_fkey(name)
+          `)
+          .eq('purchaser_userid', session.user.id)
+          .eq('is_order_accepted', true)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          setOrders(data);
+          if (data.length === 0) {
+            setMessage({ type: 'info', text: '目前沒有已接訂單' });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching accepted orders:', error);
+        setMessage({ type: 'error', text: '讀取已接訂單失敗：' + error.message });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAcceptedOrders();
+  }, [session, supabase]);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const pageStyle = {
+    maxWidth: '900px',
+    margin: '3rem auto',
+    padding: '2.5rem',
+    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    backgroundColor: '#ffffff',
+    borderRadius: '8px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  };
+
+  const navStyle = {
+    display: 'flex',
+    marginBottom: '2.5rem',
+    borderBottom: '1px solid #dee2e6',
+  };
+
+  const navButtonStyle = (tabName) => ({
+    padding: '1rem 1.5rem',
+    border: 'none',
+    borderBottom: activeTab === tabName ? '3px solid #007bff' : '3px solid transparent',
+    background: 'none',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    fontWeight: activeTab === tabName ? '600' : 'normal',
+    color: activeTab === tabName ? '#007bff' : '#495057',
+    transition: 'color 0.2s ease-in-out, border-bottom-color 0.2s ease-in-out',
+    marginRight: '0.5rem',
+    textDecoration: 'none',
+  });
+
+  const h2Style = {
+    textAlign: 'center',
+    color: '#343a40',
+    marginBottom: '2rem',
+    fontWeight: '600',
+  };
+  
+  const messageStyle = (type) => ({
+    padding: '1rem',
+    marginBottom: '1.5rem',
+    borderRadius: '4px',
+    color: type === 'info' ? '#0c5460' : '#fff',
+    backgroundColor: type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#d1ecf1',
+    textAlign: 'center',
+    border: type === 'info' ? '1px solid #bee5eb' : 'none',
+  });
+
+  const orderListStyle = {
+    listStyleType: 'none',
+    padding: 0,
+  };
+
+  const orderItemStyle = {
+    backgroundColor: '#f8f9fa',
+    border: '1px solid #dee2e6',
+    borderRadius: '6px',
+    padding: '1.5rem',
+    marginBottom: '1rem',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    transition: 'transform 0.2s ease-in-out, boxShadow 0.2s ease-in-out',
+  };
+
+  const orderLinkStyle = {
+    textDecoration: 'none',
+    color: 'inherit',
+  };
+  
+  const orderDetailStyle = {
+    marginBottom: '0.5rem',
+    color: '#495057',
+  };
+  
+  const orderDetailLabelStyle = {
+    fontWeight: '600',
+    color: '#343a40',
+  };
+
+  if (loading && orders.length === 0) {
+    return <div style={{...pageStyle, textAlign: 'center'}}><p>正在載入已接訂單...</p></div>;
+  }
+
+  return (
+    <div style={pageStyle}>
+      <nav style={navStyle}>
+        <Link to="/agent/profile" style={navButtonStyle('account')} onClick={() => setActiveTab('account')}>帳戶資訊</Link>
+        <button style={navButtonStyle('accepted-orders')} onClick={() => setActiveTab('accepted-orders')}>已接訂單</button>
+        <button style={navButtonStyle('quoted-orders')} onClick={() => { setActiveTab('quoted-orders'); alert('功能待開發'); }}>已報價訂單</button>
+        <button style={navButtonStyle('completed-orders')} onClick={() => { setActiveTab('completed-orders'); alert('功能待開發'); }}>已完成訂單</button>
+      </nav>
+
+      <h2 style={h2Style}>我的已接訂單</h2>
+
+      {message.text && <p style={messageStyle(message.type)}>{message.text}</p>}
+
+      {orders.length > 0 && (
+        <ul style={orderListStyle}>
+          {orders.map(order => (
+            <li 
+              key={order.order_id} 
+              style={orderItemStyle}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0px)';
+                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+              }}
+            >
+              <Link to={`/agent/order/${order.order_id}`} style={orderLinkStyle}>
+                <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
+                <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
+                <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單狀態：</span>{order.order_status || 'N/A'}</p>
+                <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
+                {order.amount !== null && order.amount !== undefined && (
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>¥{order.amount}</p>
+                )}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+} 

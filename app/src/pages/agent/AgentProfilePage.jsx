@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useSupabase } from '../context/SupabaseProvider'; // 假設 SupabaseProvider 在 context 資料夾中
+import { Link } from 'react-router-dom';
+import { useSupabase } from '../../context/SupabaseProvider'; // Adjusted import path for SupabaseProvider
 
-export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更新為 AgentProfilePage
+export default function AgentProfilePage() {
   const { supabase, session } = useSupabase();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState({
@@ -12,17 +13,17 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     country: '',
     address: '',
   });
-  const [message, setMessage] = useState(''); // 用於顯示成功或失敗訊息
-  const [activeTab, setActiveTab] = useState('account'); // 'account', 'orders', 'quotes'
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [activeTab, setActiveTab] = useState('account');
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (session?.user) {
         setLoading(true);
-        setMessage('');
+        setMessage({ type: '', text: '' });
         try {
           const { data, error } = await supabase
-            .from('users') // Supabase 中的用戶表名
+            .from('users')
             .select('*')
             .eq('userid', session.user.id)
             .single();
@@ -72,9 +73,8 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     }
 
     setLoading(true);
-    setMessage('');
+    setMessage({ type: '', text: '' });
 
-    // 準備要更新的資料，不包含 userid
     const { userid: _userid, ...updateData } = userData;
 
     if (!updateData.name || !updateData.email) {
@@ -101,7 +101,6 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     }
   };
 
-  // Inline styles
   const pageStyle = {
     maxWidth: '700px',
     margin: '3rem auto',
@@ -129,11 +128,12 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     color: activeTab === tabName ? '#007bff' : '#495057',
     transition: 'color 0.2s ease-in-out, border-bottom-color 0.2s ease-in-out',
     marginRight: '0.5rem',
+    textDecoration: 'none',
   });
 
   const formGroupStyle = {
     display: 'grid',
-    gridTemplateColumns: '140px 1fr', // Label column and Input column
+    gridTemplateColumns: '140px 1fr',
     gap: '1rem',
     alignItems: 'center',
     marginBottom: '1.5rem',
@@ -143,7 +143,7 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     textAlign: 'right',
     color: '#343a40',
     fontWeight: '500',
-    paddingRight: '1rem', // Space between label and input
+    paddingRight: '1rem',
   };
 
   const inputStyle = {
@@ -155,8 +155,6 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     fontSize: '0.95rem',
     transition: 'border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
   };
-  // Add this to your styles section for focus effect
-  // :focus { border-color: #80bdff; outline: 0; box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); }
 
   const disabledInputStyle = {
     ...inputStyle,
@@ -174,18 +172,18 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     fontSize: '1rem',
     fontWeight: '600',
     transition: 'background-color 0.2s ease-in-out',
-    display: 'block', // Make button block to center it
-    margin: '1.5rem auto 0 auto', // Center the button
+    display: 'block',
+    margin: '1.5rem auto 0 auto',
   };
-  // Add :hover { background-color: #218838; }
 
   const messageStyle = (type) => ({
     padding: '1rem',
     marginBottom: '1.5rem',
     borderRadius: '4px',
-    color: '#fff',
-    backgroundColor: type === 'success' ? '#28a745' : '#dc3545',
+    color: type === 'info' ? '#0c5460' : '#fff',
+    backgroundColor: type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#d1ecf1',
     textAlign: 'center',
+    border: type === 'info' ? '1px solid #bee5eb' : 'none',
   });
   
   const h2Style = {
@@ -203,85 +201,46 @@ export default function AgentProfilePage() { // <--- 已將 UserProfilePage 更�
     <div style={pageStyle}>
       <nav style={navStyle}>
         <button style={navButtonStyle('account')} onClick={() => setActiveTab('account')}>帳戶資訊</button>
-        <button style={navButtonStyle('orders')} onClick={() => { setActiveTab('orders'); alert('功能待開發'); }}>已接訂單</button>
-        <button style={navButtonStyle('quotes')} onClick={() => { setActiveTab('quotes'); alert('功能待開發'); }}>已報價訂單</button>
+        <Link to="/agent/accepted-orders" style={navButtonStyle('accepted-orders')} onClick={() => setActiveTab('accepted-orders')}>已接訂單</Link>
+        <button style={navButtonStyle('quoted-orders')} onClick={() => { setActiveTab('quoted-orders'); alert('功能待開發'); }}>已報價訂單</button>
+        <button style={navButtonStyle('completed-orders')} onClick={() => { setActiveTab('completed-orders'); alert('功能待開發'); }}>已完成訂單</button>
       </nav>
 
       <h2 style={h2Style}>帳戶資訊</h2>
-      {message && <p style={messageStyle(message.type)}>{message.text}</p>}
+      {message && message.text && <p style={messageStyle(message.type)}>{message.text}</p>}
       
       <form onSubmit={handleSubmit}>
         <div style={formGroupStyle}>
           <label htmlFor="userid" style={labelStyle}>用戶ID (User ID)</label>
-          <input
-            type="text"
-            id="userid"
-            name="userid"
-            value={userData.userid}
-            style={disabledInputStyle}
-            disabled
-          />
+          <input type="text" id="userid" name="userid" value={userData.userid} style={disabledInputStyle} disabled />
         </div>
         <div style={formGroupStyle}>
           <label htmlFor="name" style={labelStyle}>姓名 (Name)</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={userData.name}
-            onChange={handleChange}
-            style={inputStyle} // Apply general input style, add :focus pseudo-class via CSS file or more complex JS if needed
-            required
-          />
+          <input type="text" id="name" name="name" value={userData.name} onChange={handleChange} style={inputStyle} required />
         </div>
         <div style={formGroupStyle}>
           <label htmlFor="email" style={labelStyle}>電子郵件 (Email)</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={userData.email}
-            onChange={handleChange}
-            style={inputStyle}
-            required
-          />
+          <input type="email" id="email" name="email" value={userData.email} onChange={handleChange} style={inputStyle} required />
         </div>
         <div style={formGroupStyle}>
           <label htmlFor="phone" style={labelStyle}>電話 (Phone)</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={userData.phone}
-            onChange={handleChange}
-            style={inputStyle}
-          />
+          <input type="tel" id="phone" name="phone" value={userData.phone} onChange={handleChange} style={inputStyle} />
         </div>
         <div style={formGroupStyle}>
           <label htmlFor="country" style={labelStyle}>國家 (Country)</label>
-          <input
-            type="text"
-            id="country"
-            name="country"
-            value={userData.country}
-            onChange={handleChange}
-            style={inputStyle}
-          />
+          <input type="text" id="country" name="country" value={userData.country} onChange={handleChange} style={inputStyle} />
         </div>
         <div style={formGroupStyle}>
           <label htmlFor="address" style={labelStyle}>地址 (Address)</label>
-          <textarea
-            id="address"
-            name="address"
-            value={userData.address}
-            onChange={handleChange}
-            rows="3"
-            style={inputStyle}
-          />
+          <textarea id="address" name="address" value={userData.address} onChange={handleChange} rows="3" style={inputStyle} />
         </div>
-        <button type="submit" style={buttonStyle} disabled={loading} 
+        <button 
+          type="submit" 
+          style={buttonStyle} 
+          disabled={loading} 
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#218838'} 
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#28a745'}>
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#28a745'}
+        >
           {loading && Object.values(userData).some(val => val !== '') ? '保存中...' : '保存'}
         </button>
       </form>
