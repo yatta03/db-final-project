@@ -12,6 +12,8 @@ import AgentProfilePage from "./pages/agent/AgentProfilePage";
 import AgentAcceptedOrdersPage from "./pages/agent/AgentAcceptedOrdersPage";
 import AgentOrderDetailPage from "./pages/agent/AgentOrderDetailPage";
 import AgentQuotedOrdersPage from "./pages/agent/AgentQuotedOrdersPage";
+import AgentCompletedOrdersPage from "./pages/agent/AgentCompletedOrdersPage";
+import AgentPublicProfilePage from "./pages/agent/AgentPublicProfilePage";
 
 function App() {
   return (
@@ -27,10 +29,15 @@ function App() {
             <Route path="/buyer/browse/order/:orderId" element={<OrderDetailPage role={"buyer"} />} />
             <Route path="/agent/browse/order/:orderId" element={<OrderDetailPage role={"agent"} />} />
 
-            <Route path="/agent/order/:orderId" element={<AgentOrderDetailPage />} />
+            {/* Agent-specific private pages (more specific routes first) */}
             <Route path="/agent/profile" element={<AgentProfilePage />} />
             <Route path="/agent/accepted-orders" element={<AgentAcceptedOrdersPage />} />
             <Route path="/agent/quoted-orders" element={<AgentQuotedOrdersPage />} />
+            <Route path="/agent/completed-orders" element={<AgentCompletedOrdersPage />} />
+            <Route path="/agent/order/:orderId" element={<AgentOrderDetailPage />} />
+
+            {/* Agent-specific dynamic public page (less specific, so placed last) */}
+            <Route path="/agent/:userId" element={<AgentPublicProfilePage />} />
           </Routes>
         </Router>
       </SupabaseProvider>

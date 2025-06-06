@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSupabase } from '../../context/SupabaseProvider'; // Adjusted import path
+import { useSupabase } from '../../context/SupabaseProvider';
 
-export default function AgentAcceptedOrdersPage() {
+export default function AgentCompletedOrdersPage() {
   const { supabase, session } = useSupabase();
   const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState([]);
+  const [completedOrders, setCompletedOrders] = useState([]);
   const [message, setMessage] = useState({ type: '', text: '' });
-  const [activeTab, setActiveTab] = useState('accepted-orders');
+  const [activeTab, setActiveTab] = useState('completed-orders');
 
   useEffect(() => {
-    const fetchAcceptedOrders = async () => {
+    const fetchCompletedOrders = async () => {
       if (!session?.user) {
         setMessage({ type: 'error', text: '用戶未登入' });
         setLoading(false);
@@ -30,7 +30,7 @@ export default function AgentAcceptedOrdersPage() {
             customer:users!orders_customer_userid_fkey(name)
           `)
           .eq('purchaser_userid', session.user.id)
-          .eq('is_order_accepted', true)
+          .eq('order_status', 'completed')
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -38,20 +38,20 @@ export default function AgentAcceptedOrdersPage() {
         }
 
         if (data) {
-          setOrders(data);
+          setCompletedOrders(data);
           if (data.length === 0) {
-            setMessage({ type: 'info', text: '目前沒有已接訂單' });
+            setMessage({ type: 'info', text: '目前沒有已完成的訂單' });
           }
         }
       } catch (error) {
-        console.error('Error fetching accepted orders:', error);
-        setMessage({ type: 'error', text: '讀取已接訂單失敗：' + error.message });
+        console.error('Error fetching completed orders:', error);
+        setMessage({ type: 'error', text: '讀取已完成訂單失敗：' + error.message });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAcceptedOrders();
+    fetchCompletedOrders();
   }, [session, supabase]);
 
   const formatDate = (dateString) => {
@@ -106,45 +106,38 @@ export default function AgentAcceptedOrdersPage() {
     border: type === 'info' ? '1px solid #bee5eb' : 'none',
   });
 
-  const orderListStyle = {
+  const listStyle = {
     listStyleType: 'none',
     padding: 0,
   };
 
-  const orderItemStyle = {
+  const listItemStyle = {
     backgroundColor: '#f8f9fa',
     border: '1px solid #dee2e6',
     borderRadius: '6px',
     padding: '1.5rem',
     marginBottom: '1rem',
     boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-    transition: 'transform 0.2s ease-in-out, boxShadow 0.2s ease-in-out',
   };
 
-  const orderLinkStyle = {
+  const linkStyle = {
     textDecoration: 'none',
     color: 'inherit',
+    display: 'block', // Make the whole area clickable
   };
-  
-  const orderDetailsContainerStyle = {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '1rem',
-    alignItems: 'center',
-    marginTop: '0.5rem',
-  };
-  
-  const orderDetailStyle = {
+
+  const detailItemStyle = {
+    marginBottom: '0.5rem',
     color: '#495057',
   };
   
-  const orderDetailLabelStyle = {
+  const detailLabelStyle = {
     fontWeight: '600',
     color: '#343a40',
   };
 
-  if (loading && orders.length === 0) {
-    return <div style={{...pageStyle, textAlign: 'center'}}><p>正在載入已接訂單...</p></div>;
+  if (loading && completedOrders.length === 0) {
+    return <div style={{...pageStyle, textAlign: 'center'}}><p>正在載入已完成訂單...</p></div>;
   }
 
   return (
@@ -156,40 +149,25 @@ export default function AgentAcceptedOrdersPage() {
         <Link to="/agent/completed-orders" style={navButtonStyle('completed-orders')} onClick={() => setActiveTab('completed-orders')}>已完成訂單</Link>
       </nav>
 
-      <h2 style={h2Style}>我的已接訂單</h2>
+      <h2 style={h2Style}>我的已完成訂單</h2>
 
       {message.text && <p style={messageStyle(message.type)}>{message.text}</p>}
 
-      {orders.length > 0 && (
-        <ul style={orderListStyle}>
-          {orders.map(order => (
-            <li 
-              key={order.order_id} 
-              style={orderItemStyle}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-3px)';
-                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0px)';
-                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
-              }}
-            >
-              <Link to={`/agent/order/${order.order_id}`} style={orderLinkStyle}>
-                <h3 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
-                <div style={orderDetailsContainerStyle}>
-                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
-                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單狀態：</span>{order.order_status || 'N/A'}</p>
-                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
-                  {order.amount !== null && order.amount !== undefined && (
-                    <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>¥{order.amount}</p>
-                  )}
-                </div>
+      {completedOrders.length > 0 ? (
+        <ul style={listStyle}>
+          {completedOrders.map(order => (
+            <li key={order.order_id} style={listItemStyle}>
+              <Link to={`/agent/order/${order.order_id}`} style={linkStyle}>
+                <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額：</span>¥{order.amount ?? 'N/A'}</p>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態：</span>{order.order_status}</p>
               </Link>
             </li>
           ))}
         </ul>
-      )}
+      ) : null}
     </div>
   );
 } 

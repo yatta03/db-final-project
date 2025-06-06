@@ -203,7 +203,7 @@ export default function AgentProfilePage() {
         <Link to="/agent/profile" style={navButtonStyle('account')} onClick={() => setActiveTab('account')}>帳戶資訊</Link>
         <Link to="/agent/accepted-orders" style={navButtonStyle('accepted-orders')} onClick={() => setActiveTab('accepted-orders')}>已接訂單</Link>
         <Link to="/agent/quoted-orders" style={navButtonStyle('quoted-orders')} onClick={() => setActiveTab('quoted-orders')}>已報價訂單</Link>
-        <button style={navButtonStyle('completed-orders')} onClick={() => { setActiveTab('completed-orders'); alert('功能待開發'); }}>已完成訂單</button>
+        <Link to="/agent/completed-orders" style={navButtonStyle('completed-orders')} onClick={() => setActiveTab('completed-orders')}>已完成訂單</Link>
       </nav>
 
       <h2 style={h2Style}>帳戶資訊</h2>
