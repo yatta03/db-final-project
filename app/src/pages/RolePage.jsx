@@ -22,7 +22,7 @@ export default function RolePage() {
         <Link to={"/agent/browse-orders"} style={{ ...buttonStyle, backgroundColor: "#444" }}>
           代購者
         </Link>
-        <Link to={"/buyer"} style={{ ...buttonStyle, backgroundColor: "#0077cc" }}>
+        <Link to={"/buyer/posted-orders"} style={{ ...buttonStyle, backgroundColor: "#0077cc" }}>
           買家
         </Link>
       </div>

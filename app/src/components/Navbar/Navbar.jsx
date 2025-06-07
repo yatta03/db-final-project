@@ -15,6 +15,7 @@ export default function Navbar() {
   };
 
   const isAgentPage = location.pathname.startsWith('/agent/');
+  const isBuyerPage = location.pathname.startsWith('/buyer/');
 
   return (
     <>
@@ -23,6 +24,11 @@ export default function Navbar() {
           <div className="nav-items">
             {isAgentPage && (
               <Link to="/agent/profile" className="dashboard-button">
+                儀表板
+              </Link>
+            )}
+            {isBuyerPage && (
+              <Link to="/buyer/profile" className="dashboard-button">
                 儀表板
               </Link>
             )}
