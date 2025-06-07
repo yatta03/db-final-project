@@ -129,7 +129,7 @@ export default function OrderDetailPage({ role }) {
           <div className="status-item">
             <h3>{orderData?.is_order_accepted ? "報價歷史" : "報價"}</h3>
             <div className="quote-form">
-              {role == "agent" && orderData.is_order_accepted == false && orderData.customer_userid != session?.user.id && (
+              {role == "agent" && orderData.is_order_accepted == false && (
                 <>
                   <QuotePost postQuote={postQuote} />
                 </>

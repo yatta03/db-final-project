@@ -46,7 +46,9 @@ const BuyerPostedOrdersPage = () => {
     <div className={styles.pageContainer}>
       <header className={styles.header}>
         <h1 className={styles.title}>我發佈的訂單</h1>
-        <button className={styles.postButton}>發佈需求</button>
+        <Link to="/buyer/create-order" className={styles.postButton}>
+          發佈需求
+        </Link>
       </header>
       <main className={styles.mainContent}>
         {loading && <p>Loading orders...</p>}

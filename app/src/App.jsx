@@ -16,11 +16,12 @@ import AgentCompletedOrdersPage from "./pages/agent/AgentCompletedOrdersPage";
 import AgentPublicProfilePage from "./pages/agent/AgentPublicProfilePage";
 import AgentBrowseOrdersPage from "./pages/agent/AgentBrowseOrdersPage";
 
-import The_buyer_order_detail from "./pages/Buyer/Buyer_order_detail";
+import BuyerOrderDetail from "./pages/Buyer/Buyer_order_detail";
 import The_buyer_profile from "./pages/Buyer/Buyer_profile";
 import The_buyer_taken from "./pages/Buyer/Buyer_taken";
 import The_buyer_complete from "./pages/Buyer/Buyer_complete";
 import BuyerPostedOrdersPage from "./pages/Buyer/BuyerPostedOrdersPage";
+import CreateOrderPage from "./pages/Buyer/CreateOrderPage";
 
 
 function App() {
@@ -46,8 +47,9 @@ function App() {
             <Route path="/agent/order/:orderId" element={<AgentOrderDetailPage />} />
 
 
+            <Route path="/buyer/create-order" element={<CreateOrderPage />} />
             <Route path="/buyer/posted-orders" element={<BuyerPostedOrdersPage />} />
-            <Route path="/buyer/order/:orderId" element={<The_buyer_order_detail />} />
+            <Route path="/buyer/order/:orderId" element={<BuyerOrderDetail />} />
             <Route path="/buyer/profile" element={<The_buyer_profile />} />
             <Route path="/buyer/taken-orders" element={<The_buyer_taken />} />
             <Route path="/buyer/complete-orders" element={<The_buyer_complete />} />
