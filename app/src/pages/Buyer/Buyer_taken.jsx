@@ -27,7 +27,7 @@ export default function The_buyer_taken() {
             order_status,
             created_at,
             amount,
-            customer:users!orders_customer_userid_fkey(name)
+            purchaser:users!orders_purchaser_userid_fkey(name)
           `)
           .eq('customer_userid', session.user.id)
           .eq('is_order_accepted', true)

@@ -155,7 +155,7 @@ export default function The_buyer_complete() {
         <ul style={listStyle}>
           {completedOrders.map(order => (
             <li key={order.order_id} style={listItemStyle}>
-              <Link to={`/agent/order/${order.order_id}`} style={linkStyle}>
+              <Link to={`/buyer/order/${order.order_id}`} style={linkStyle}>
                 <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
                 <p style={detailItemStyle}><span style={detailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
                 <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額：</span>${order.amount ?? 'N/A'}</p>
