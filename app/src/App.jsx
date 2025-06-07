@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router";
 import { SupabaseProvider } from "./context/SupabaseProvider";
 import "./App.css";
 
@@ -19,7 +19,7 @@ function App() {
   return (
     <>
       <SupabaseProvider>
-        <Router>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
@@ -39,7 +39,7 @@ function App() {
             {/* Agent-specific dynamic public page (less specific, so placed last) */}
             <Route path="/agent/:userId" element={<AgentPublicProfilePage />} />
           </Routes>
-        </Router>
+        </BrowserRouter>
       </SupabaseProvider>
     </>
   );
