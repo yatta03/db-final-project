@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useSupabase } from "../../context/SupabaseProvider";
 
 import OrderDetail from "../../components/OrderDetail/OrderDetail";
@@ -131,6 +131,8 @@ export default function OrderDetailPage({ role }) {
 
   return (
     <div className="order-detail-page">
+      <Link to={`/${role}/browse-orders`}>返回訂單列表</Link>
+
       <div className="top-section">
         <OrderDetail orderData={orderData} />
       </div>
