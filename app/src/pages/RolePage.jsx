@@ -19,8 +19,7 @@ export default function RolePage() {
     <>
       <div style={pageStyle}>
         <p style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>請選擇身分</p>
-        {/* 網址是暫時填的 */}
-        <Link to={"/bidder"} style={{ ...buttonStyle, backgroundColor: "#444" }}>
+        <Link to={"/agent/browse-orders"} style={{ ...buttonStyle, backgroundColor: "#444" }}>
           代購者
         </Link>
         <Link to={"/buyer"} style={{ ...buttonStyle, backgroundColor: "#0077cc" }}>

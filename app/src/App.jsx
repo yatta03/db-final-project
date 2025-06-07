@@ -14,6 +14,7 @@ import AgentOrderDetailPage from "./pages/agent/AgentOrderDetailPage";
 import AgentQuotedOrdersPage from "./pages/agent/AgentQuotedOrdersPage";
 import AgentCompletedOrdersPage from "./pages/agent/AgentCompletedOrdersPage";
 import AgentPublicProfilePage from "./pages/agent/AgentPublicProfilePage";
+import AgentBrowseOrdersPage from "./pages/agent/AgentBrowseOrdersPage";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/agent/browse/order/:orderId" element={<OrderDetailPage role={"agent"} />} />
 
             {/* Agent-specific private pages (more specific routes first) */}
+            <Route path="/agent/browse-orders" element={<AgentBrowseOrdersPage />} />
             <Route path="/agent/profile" element={<AgentProfilePage />} />
             <Route path="/agent/accepted-orders" element={<AgentAcceptedOrdersPage />} />
             <Route path="/agent/quoted-orders" element={<AgentQuotedOrdersPage />} />
