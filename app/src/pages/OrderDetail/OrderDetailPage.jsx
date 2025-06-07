@@ -32,6 +32,20 @@ export default function OrderDetailPage({ role }) {
     setLoading(false);
   };
 
+  const cancelOrder = async () => {
+    const confirmed = window.confirm("確定要取消這筆訂單嗎？此操作無法復原。");
+    if (!confirmed) return;
+
+    const { data, error } = await supabase.from("orders").delete().eq("order_id", orderId).select();
+    if (error) {
+      console.error("cancel order fail", error);
+      return;
+    }
+
+    alert("訂單已成功取消");
+    setOrderData(null);
+  };
+
   const postQuote = async (price) => {
     const { data, error } = await supabase
       .from("quotes")
@@ -112,6 +126,7 @@ export default function OrderDetailPage({ role }) {
   }, [orderId]);
 
   if (loading) return <p>loading...</p>;
+  if (!orderData) return <p>no data</p>;
   if (error) return <p>{JSON.stringify(error)}</p>;
 
   return (
@@ -122,7 +137,7 @@ export default function OrderDetailPage({ role }) {
 
       <div className="bottom-section">
         <div className="left-column">
-          <OrderStatus orderData={orderData} curUserId={session?.user.id} role={role} />
+          <OrderStatus orderData={orderData} curUserId={session?.user.id} role={role} cancelOrder={cancelOrder} />
         </div>
 
         <div className="right-column">

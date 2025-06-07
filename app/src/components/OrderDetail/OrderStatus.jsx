@@ -1,4 +1,4 @@
-export default function OrderStatus({ orderData, curUserId, role }) {
+export default function OrderStatus({ orderData, curUserId, role, cancelOrder }) {
   return (
     <>
       {/* todo: edit status function in below: 
@@ -20,6 +20,18 @@ export default function OrderStatus({ orderData, curUserId, role }) {
                 <p>email: {orderData.purchaser_email}</p>
               </>
             )}
+          </div>
+        </>
+      )}
+
+      {curUserId == orderData.customer_userid && role == "buyer" && orderData.is_order_accepted == false && (
+        <>
+          <div className="status-item">
+            <div style={{ textAlign: "center" }}>
+              <button onClick={cancelOrder} style={{ color: "red" }}>
+                撤銷訂單
+              </button>
+            </div>
           </div>
         </>
       )}
