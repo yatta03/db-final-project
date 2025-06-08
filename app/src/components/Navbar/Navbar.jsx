@@ -23,7 +23,7 @@ export default function Navbar() {
         {session?.access_token ? (
           <div className="nav-items">
             {/* show user name */}
-            <p style={{ color: "black" }}>{userProfile.name}</p>
+            <p style={{ color: "black" }}>{userProfile?.name ? userProfile.name : "已登入"}</p>
 
             {isAgentPage && (
               <>
