@@ -59,6 +59,22 @@
   padding: 1.5rem;
 }
 
+.back-to-list-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  margin-bottom: 1rem;
+  width: fit-content;
+}
+
+.back-to-list-btn:hover {
+  background-color: #0056b3;
+}
+
 /* ✅ Mobile Styles */
 @media (max-width: 768px) {
   .bottom-section {
