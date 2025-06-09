@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useSupabase } from "../../context/SupabaseProvider";
 import styles from "./CreateOrderPage.module.css";
 
@@ -12,15 +12,85 @@ const CreateOrderPage = () => {
   const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileChecking, setProfileChecking] = useState(false);
+
+  // 檢查用戶資料是否完整
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      if (!session?.user) return;
+      
+      setProfileChecking(true);
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('email, phone, country, address')
+          .eq('userid', session.user.id)
+          .single();
+          
+        if (error) {
+          console.error('Error fetching user profile:', error);
+          return;
+        }
+        
+        setUserProfile(data);
+      } catch (err) {
+        console.error('Error checking user profile:', err);
+      } finally {
+        setProfileChecking(false);
+      }
+    };
+
+    checkUserProfile();
+  }, [session, supabase]);
+
+  // 檢查個人資料是否完整
+  const isProfileComplete = () => {
+    if (!userProfile) return false;
+    
+    const requiredFields = ['email', 'phone', 'country', 'address'];
+    return requiredFields.every(field => 
+      userProfile[field] && userProfile[field].toString().trim() !== ''
+    );
+  };
+
+  // 獲取缺失的欄位
+  const getMissingFields = () => {
+    if (!userProfile) return [];
+    
+    const fieldLabels = {
+      email: '電子郵件',
+      phone: '電話',
+      country: '國家',
+      address: '地址'
+    };
+    
+    const missingFields = [];
+    for (const [field, label] of Object.entries(fieldLabels)) {
+      if (!userProfile[field] || userProfile[field].toString().trim() === '') {
+        missingFields.push(label);
+      }
+    }
+    return missingFields;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!session) {
-      setError("Please sign in to post an order.");
+      setError("請先登入才能發布訂單。");
       return;
     }
+
+    // 檢查基本表單欄位
     if (!productName || !country || quantity < 1) {
-      setError("Please fill in all fields correctly.");
+      setError("請正確填寫所有欄位。");
+      return;
+    }
+
+    // 檢查用戶個人資料是否完整
+    if (!isProfileComplete()) {
+      const missingFields = getMissingFields();
+      setError(`發布訂單前請先完善您的收貨資料。缺失欄位：${missingFields.join('、')}。請前往個人資料頁面補充完整資訊。`);
       return;
     }
 
@@ -60,10 +130,34 @@ const CreateOrderPage = () => {
     }
   };
 
+  if (profileChecking) {
+    return (
+      <div className={styles.pageContainer}>
+        <div className={styles.formContainer}>
+          <h1 className={styles.title}>正在檢查資料...</h1>
+          <p>請稍候</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.pageContainer}>
       <div className={styles.formContainer}>
         <h1 className={styles.title}>發佈新需求</h1>
+        
+        {/* 資料完整性提示 */}
+        {userProfile && !isProfileComplete() && (
+          <div className={styles.warningBox}>
+            <h3>⚠️ 個人資料未完整</h3>
+            <p>您的個人資料還缺少以下資訊：<strong>{getMissingFields().join('、')}</strong></p>
+            <p>發布訂單前請先完善您的收貨資料，以便代購者聯繫您。</p>
+            <Link to="/buyer/profile" className={styles.profileLink}>
+              前往個人資料頁面 →
+            </Link>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="productName">商品名稱</label>
@@ -97,7 +191,11 @@ const CreateOrderPage = () => {
             />
           </div>
           {error && <p className={styles.errorText}>{error}</p>}
-          <button type="submit" disabled={loading} className={styles.submitButton}>
+          <button 
+            type="submit" 
+            disabled={loading || !isProfileComplete()} 
+            className={styles.submitButton}
+          >
             {loading ? "提交中..." : "提交訂單"}
           </button>
         </form>
