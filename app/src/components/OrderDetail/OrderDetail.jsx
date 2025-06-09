@@ -16,7 +16,6 @@ export default function OrderDetail({ orderData }) {
         {orderData.products?.map((p) => {
           return (
             <div key={p.product_id}>
-              <p>商品 #{p.product_id}</p>
               <p>商品名稱： {p.product_name}</p>
               <p>數量： {p.quantity}</p>
               {p.country && (

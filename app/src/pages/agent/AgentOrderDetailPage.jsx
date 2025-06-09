@@ -9,6 +9,7 @@ export default function AgentOrderDetailPage() {
   
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]); // State for products
+  const [agentQuote, setAgentQuote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -45,17 +46,20 @@ export default function AgentOrderDetailPage() {
           setOrder(orderData);
         } else {
           // If not the purchaser, check if the agent has a quote on this order
-          const { count, error: quoteError } = await supabase
+          // and fetch the quote price at the same time.
+          const { data: quoteData, error: quoteError } = await supabase
             .from('quotes')
-            .select('*', { count: 'exact', head: true })
+            .select('price')
             .eq('order_id', orderId)
-            .eq('user_id', session.user.id);
+            .eq('user_id', session.user.id)
+            .single();
 
-          if (quoteError) {
+          if (quoteError && quoteError.code !== 'PGRST116') { // Ignore "no rows" error, handle below
             throw quoteError;
           }
 
-          if (count > 0) {
+          if (quoteData) {
+            setAgentQuote(quoteData); // Store the quote for display
             setOrder(orderData);
           } else {
             setMessage({ type: 'error', text: '找不到訂單或無權訪問。' });
@@ -86,7 +90,7 @@ export default function AgentOrderDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [orderId, session, supabase]);
+  }, [orderId, session, supabase, navigate]);
 
   useEffect(() => {
     fetchOrderDetails();
@@ -110,7 +114,7 @@ export default function AgentOrderDetailPage() {
         throw error;
       }
       
-      setMessage({ type: 'success', text: '訂單狀態已更新為處理中！' });
+      setMessage({ type: 'success', text: '訂單狀態已更新為已出貨！' });
       await fetchOrderDetails(); 
 
     } catch (error) {
@@ -118,6 +122,48 @@ export default function AgentOrderDetailPage() {
       setMessage({ type: 'error', text: `更新訂單狀態失敗：${error.message}` });
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const withdrawQuote = async () => {
+    if (!order) return;
+    
+    const confirmed = window.confirm("您確定要撤銷此報價嗎？此操作無法復原。");
+    if (!confirmed) return;
+
+    setIsUpdating(true);
+    setMessage({ type: '', text: '' });
+    try {
+      const { error } = await supabase
+        .from('quotes')
+        .delete()
+        .eq('order_id', order.order_id)
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        throw error;
+      }
+      
+      setMessage({ type: 'success', text: '報價已成功撤銷。' });
+      navigate('/agent/quoted-orders');
+
+    } catch (error) {
+      console.error('Error withdrawing quote:', error);
+      setMessage({ type: 'error', text: `撤銷報價失敗：${error.message}` });
+      setIsUpdating(false);
+    }
+  };
+
+  const translateOrderStatus = (status) => {
+    switch (status) {
+      case 'pending':
+        return '待出貨';
+      case 'in_progress':
+        return '已出貨';
+      case 'complete':
+        return '完成';
+      default:
+        return status;
     }
   };
 
@@ -172,13 +218,6 @@ export default function AgentOrderDetailPage() {
     fontWeight: '600',
     color: '#343a40',
     marginRight: '0.5em',
-  };
-
-  const productItemStyle = {
-    ...detailItemStyle,
-    paddingLeft: '1rem',
-    borderLeft: '3px solid #007bff',
-    marginLeft: '0.5rem'
   };
 
   const buttonStyle = {
@@ -243,8 +282,18 @@ export default function AgentOrderDetailPage() {
       <div style={detailSectionStyle}>
         <h3 style={{ marginTop: 0, color: '#007bff' }}>基本資訊</h3>
         <p style={detailItemStyle}><span style={detailLabelStyle}>訂單編號:</span> {order.order_id}</p>
-        <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態:</span> {order.order_status}</p>
-        <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額:</span> ${order.amount != null ? order.amount.toFixed(2) : 'N/A'}</p>
+        {order.is_order_accepted ? (
+          <>
+            <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態:</span> {translateOrderStatus(order.order_status)}</p>
+            <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額:</span> ${order.amount != null ? order.amount.toFixed(2) : 'N/A'}</p>
+          </>
+        ) : (
+          agentQuote && (
+            <p style={detailItemStyle}>
+              <span style={detailLabelStyle}>您的報價金額:</span> ${agentQuote.price != null ? agentQuote.price.toFixed(2) : 'N/A'}
+            </p>
+          )
+        )}
         <p style={detailItemStyle}><span style={detailLabelStyle}>創建時間:</span> {formatDate(order.created_at)}</p>
         <p style={detailItemStyle}><span style={detailLabelStyle}>接受狀態:</span> {order.is_order_accepted ? '已接受' : '待接受'}</p>
       </div>
@@ -254,9 +303,9 @@ export default function AgentOrderDetailPage() {
           <h3 style={{ marginTop: 0, color: '#007bff' }}>商品資訊</h3>
           {products.map((product, index) => (
             <div key={index} style={{ marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: index < products.length -1 ? '1px dashed #ced4da' : 'none' }}>
-              <p style={productItemStyle}><span style={detailLabelStyle}>商品名稱:</span> {product.product_name}</p>
-              <p style={productItemStyle}><span style={detailLabelStyle}>數量:</span> {product.quantity}</p>
-              <p style={productItemStyle}><span style={detailLabelStyle}>國家:</span> {product.country || 'N/A'}</p>
+              <p style={detailItemStyle}><span style={detailLabelStyle}>商品名稱:</span> {product.product_name}</p>
+              <p style={detailItemStyle}><span style={detailLabelStyle}>數量:</span> {product.quantity}</p>
+              <p style={detailItemStyle}><span style={detailLabelStyle}>國家:</span> {product.country || 'N/A'}</p>
             </div>
           ))}
         </div>
@@ -288,6 +337,16 @@ export default function AgentOrderDetailPage() {
           style={isUpdating ? disabledButtonStyle : actionButtonStyle}
         >
           {isUpdating ? '更新中...' : '標記為已出貨'}
+        </button>
+      )}
+
+      {!order.is_order_accepted && (
+        <button
+          onClick={withdrawQuote}
+          disabled={isUpdating}
+          style={isUpdating ? disabledButtonStyle : { ...actionButtonStyle, backgroundColor: '#dc3545' }}
+        >
+          {isUpdating ? '處理中...' : '撤銷報價'}
         </button>
       )}
     </div>

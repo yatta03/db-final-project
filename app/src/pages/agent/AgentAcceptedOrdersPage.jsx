@@ -55,6 +55,17 @@ export default function AgentAcceptedOrdersPage() {
     fetchAcceptedOrders();
   }, [session, supabase]);
 
+  const translateOrderStatus = (status) => {
+    switch (status) {
+      case 'pending':
+        return '待出貨';
+      case 'in_progress':
+        return '已出貨';
+      default:
+        return status;
+    }
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString();
@@ -180,7 +191,7 @@ export default function AgentAcceptedOrdersPage() {
                 <h3 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
                 <div style={orderDetailsContainerStyle}>
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
-                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單狀態：</span>{order.order_status || 'N/A'}</p>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單狀態：</span>{translateOrderStatus(order.order_status) || 'N/A'}</p>
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
                   {order.amount !== null && order.amount !== undefined && (
                     <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>${order.amount}</p>

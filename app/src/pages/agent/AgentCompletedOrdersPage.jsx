@@ -54,9 +54,11 @@ export default function AgentCompletedOrdersPage() {
     fetchCompletedOrders();
   }, [session, supabase]);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString();
+  const translateOrderStatus = (status) => {
+    if (status === 'completed') {
+      return '完成';
+    }
+    return status;
   };
 
   const pageStyle = {
@@ -126,8 +128,16 @@ export default function AgentCompletedOrdersPage() {
     display: 'block', // Make the whole area clickable
   };
 
+  const orderDetailsContainerStyle = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '0.5rem 1rem',
+    alignItems: 'center',
+    marginTop: '0.5rem',
+  };
+
   const detailItemStyle = {
-    marginBottom: '0.5rem',
+    margin: 0,
     color: '#495057',
   };
   
@@ -158,11 +168,12 @@ export default function AgentCompletedOrdersPage() {
           {completedOrders.map(order => (
             <li key={order.order_id} style={listItemStyle}>
               <Link to={`/agent/order/${order.order_id}`} style={linkStyle}>
-                <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態：</span>{order.order_status ?? 'N/A'}</p>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>完成日期：</span>{formatDate(order.completed_at)}</p>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額：</span>${order.amount ?? 'N/A'}</p>
+                <h3 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
+                <div style={orderDetailsContainerStyle}>
+                  <p style={detailItemStyle}><span style={detailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
+                  <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態：</span>{translateOrderStatus(order.order_status) ?? 'N/A'}</p>
+                  <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額：</span>${order.amount ?? 'N/A'}</p>
+                </div>
               </Link>
             </li>
           ))}

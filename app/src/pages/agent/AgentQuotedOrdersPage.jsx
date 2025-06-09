@@ -51,7 +51,6 @@ export default function AgentQuotedOrdersPage() {
             customer_name: q.order.customer?.name || 'N/A',
             quote_price: q.price,
             quote_date: q.quotation_date_time,
-            quote_status: q.acceptance_status,
             order_created_at: q.order.created_at
           })));
           if (data.length === 0) {
@@ -145,13 +144,14 @@ export default function AgentQuotedOrdersPage() {
   const orderDetailsContainerStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: '1rem',
+    gap: '0.5rem 1rem',
     alignItems: 'center',
     marginTop: '0.5rem',
   };
   
   const orderDetailStyle = {
     color: '#495057',
+    margin: 0,
   };
   
   const orderDetailLabelStyle = {
@@ -196,7 +196,6 @@ export default function AgentQuotedOrdersPage() {
                 <div style={orderDetailsContainerStyle}>
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>客戶姓名：</span>{quote.customer_name}</p>
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>您的報價金額：</span>${quote.quote_price}</p>
-                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>報價狀態：</span>{quote.quote_status}</p>
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>報價日期：</span>{formatDate(quote.quote_date)}</p>
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>原始訂單日期：</span>{formatDate(quote.order_created_at)}</p>
                 </div>

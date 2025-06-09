@@ -36,7 +36,7 @@ export default function OrderDetailPage({ role }) {
     const confirmed = window.confirm("確定要取消這筆訂單嗎？此操作無法復原。");
     if (!confirmed) return;
 
-    const { data, error } = await supabase.from("orders").delete().eq("order_id", orderId).select();
+    const { error } = await supabase.from("orders").delete().eq("order_id", orderId).select();
     if (error) {
       console.error("cancel order fail", error);
       return;

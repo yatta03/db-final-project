@@ -94,15 +94,6 @@ export default function AgentBrowseOrdersPage() {
     flexGrow: 1,
   };
 
-  const cardTitleStyle = {
-    fontSize: '1.1rem',
-    fontWeight: '600',
-    color: '#343a40',
-    marginBottom: '1rem',
-    borderBottom: '1px solid #eee',
-    paddingBottom: '0.75rem',
-  };
-
   const detailItemStyle = {
     marginBottom: '0.75rem',
     fontSize: '0.95rem',
@@ -132,7 +123,6 @@ export default function AgentBrowseOrdersPage() {
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.1)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; }}>
                 <div style={cardContentStyle}>
-                    <h3 style={cardTitleStyle}>訂單 #{order.order_id}</h3>
                     <p style={detailItemStyle}><strong>客戶名稱：</strong> {order.users?.name || 'N/A'}</p>
                     {order.products && order.products.length > 0 ? order.products.map((product, index) => (
                         <div key={index}>

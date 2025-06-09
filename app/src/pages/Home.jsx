@@ -180,7 +180,7 @@ export default function Home() {
             e.target.style.color = "#007bff";
           }}
         >
-          免費註冊
+          註冊帳號
         </Link>
       </div>
 
