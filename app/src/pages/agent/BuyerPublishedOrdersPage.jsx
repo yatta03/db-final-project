@@ -56,7 +56,7 @@ export default function BuyerPublishedOrdersPage() {
             <li key={order.order_id} style={listItemStyle}>
               <Link to={`/buyer/browse/order/${order.order_id}`} style={linkStyle}>
                 <h3 style={{ color: '#007bff', marginBottom: '0.5rem' }}>訂單編號 #{order.order_id}</h3>
-                <p><strong>金額：</strong>¥{order.amount ?? 'N/A'}</p>
+                <p><strong>金額：</strong>${order.amount ?? 'N/A'}</p>
                 <p><strong>建立日期：</strong>{new Date(order.created_at).toLocaleDateString()}</p>
                 <p><strong>狀態：</strong>{order.order_status}</p>
               </Link>

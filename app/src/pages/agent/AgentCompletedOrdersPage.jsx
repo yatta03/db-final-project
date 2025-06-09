@@ -160,9 +160,9 @@ export default function AgentCompletedOrdersPage() {
               <Link to={`/agent/order/${order.order_id}`} style={linkStyle}>
                 <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
                 <p style={detailItemStyle}><span style={detailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額：</span>¥{order.amount ?? 'N/A'}</p>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態：</span>{order.order_status}</p>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態：</span>{order.order_status ?? 'N/A'}</p>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>完成日期：</span>{formatDate(order.completed_at)}</p>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額：</span>${order.amount ?? 'N/A'}</p>
               </Link>
             </li>
           ))}

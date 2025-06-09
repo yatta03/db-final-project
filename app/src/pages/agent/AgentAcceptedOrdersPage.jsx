@@ -183,7 +183,7 @@ export default function AgentAcceptedOrdersPage() {
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單狀態：</span>{order.order_status || 'N/A'}</p>
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
                   {order.amount !== null && order.amount !== undefined && (
-                    <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>¥{order.amount}</p>
+                    <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>${order.amount}</p>
                   )}
                 </div>
               </Link>
