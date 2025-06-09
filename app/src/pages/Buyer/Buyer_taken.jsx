@@ -185,12 +185,6 @@ export default function The_buyer_taken() {
                   {order.amount !== null && order.amount !== undefined && (
                     <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>${order.amount}</p>
                   )}
-                  {order.status === 'pending' && (
-                    <button onClick={() => handlePayment(order.order_id)}>付款</button>
-                  )}
-                  {order.status === '已付款' && (
-                    <button onClick={() => handleReceived(order.order_id)}>已收貨</button>
-                  )}
                 </div>
               </Link>
             </li>

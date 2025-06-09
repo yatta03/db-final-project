@@ -190,7 +190,7 @@ export default function BuyerOrderDetail() {
   
   return (
     <div style={pageStyle}>
-      <Link to="/buyer/taken-orders" style={backLinkStyle}>返回已發佈訂單列表</Link>
+      <Link to="/buyer/taken-orders" style={backLinkStyle}>返回已被接訂單列表</Link>
       
       {message.text && !order && <p style={messageStyle(message.type)}>{message.text}</p>}
 

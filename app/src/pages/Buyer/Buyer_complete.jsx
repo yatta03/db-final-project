@@ -64,7 +64,7 @@ export default function The_buyer_complete() {
     margin: '1rem auto',
     padding: '2.5rem',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    backgroundColor: '#c0c0c0',
+    backgroundColor: '#F4F7F6',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
   };
