@@ -122,33 +122,41 @@ export default function AgentQuotedOrdersPage() {
     border: type === 'info' ? '1px solid #bee5eb' : 'none',
   });
 
-  const listStyle = {
+  const orderListStyle = {
     listStyleType: 'none',
     padding: 0,
   };
 
-  const listItemStyle = {
+  const orderItemStyle = {
     backgroundColor: '#f8f9fa',
     border: '1px solid #dee2e6',
     borderRadius: '6px',
     padding: '1.5rem',
     marginBottom: '1rem',
     boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+    transition: 'transform 0.2s ease-in-out, boxShadow 0.2s ease-in-out',
+  };
+
+  const orderLinkStyle = {
+    textDecoration: 'none',
+    color: 'inherit',
   };
   
-  const detailItemStyle = {
-    marginBottom: '0.5rem',
+  const orderDetailsContainerStyle = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '1rem',
+    alignItems: 'center',
+    marginTop: '0.5rem',
+  };
+  
+  const orderDetailStyle = {
     color: '#495057',
   };
   
-  const detailLabelStyle = {
+  const orderDetailLabelStyle = {
     fontWeight: '600',
     color: '#343a40',
-  };
-
-  const detailsContainerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
   };
 
   if (loading && quotedOrders.length === 0) {
@@ -169,20 +177,30 @@ export default function AgentQuotedOrdersPage() {
       {message.text && <p style={messageStyle(message.type)}>{message.text}</p>}
 
       {quotedOrders.length > 0 ? (
-        <ul style={listStyle}>
+        <ul style={orderListStyle}>
           {quotedOrders.map(quote => (
-            <li key={quote.order_id + '-' + quote.quote_date} style={listItemStyle}>
-              <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{quote.order_id}</h3>
-              <p style={detailItemStyle}><span style={detailLabelStyle}>客戶姓名：</span>{quote.customer_name}</p>
-              <div style={detailsContainerStyle}>
-                <div style={detailItemStyle}>
-                  <span style={detailLabelStyle}>報價日期：</span>
-                  {formatDate(quote.quote_date)}
+            <li 
+              key={quote.order_id + '-' + quote.quote_date} 
+              style={orderItemStyle}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-3px)';
+                e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0px)';
+                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+              }}
+            >
+              <Link to={`/agent/order/${quote.order_id}`} style={orderLinkStyle}>
+                <h3 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#007bff' }}>訂單編號 #{quote.order_id}</h3>
+                <div style={orderDetailsContainerStyle}>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>客戶姓名：</span>{quote.customer_name}</p>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>您的報價金額：</span>${quote.quote_price}</p>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>報價狀態：</span>{quote.quote_status}</p>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>報價日期：</span>{formatDate(quote.quote_date)}</p>
+                  <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>原始訂單日期：</span>{formatDate(quote.order_created_at)}</p>
                 </div>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>您的報價金額：</span>${quote.quote_price}</p>
-              </div>
-              <p style={detailItemStyle}><span style={detailLabelStyle}>報價狀態：</span>{quote.quote_status}</p>
-              <p style={detailItemStyle}><span style={detailLabelStyle}>原始訂單日期：</span>{formatDate(quote.order_created_at)}</p>
+              </Link>
             </li>
           ))}
         </ul>

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSupabase } from '../../context/SupabaseProvider';
 
 export default function AgentOrderDetailPage() {
   const { supabase, session } = useSupabase();
   const { orderId } = useParams();
+  const navigate = useNavigate();
   
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]); // State for products
@@ -22,7 +23,7 @@ export default function AgentOrderDetailPage() {
     setLoading(true);
     setMessage({ type: '', text: '' });
     try {
-      // Fetch order details
+      // Fetch order details first, without checking for purchaser yet
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .select(`
@@ -31,7 +32,6 @@ export default function AgentOrderDetailPage() {
           purchaser:users!orders_purchaser_userid_fkey(userid, name, email)
         `)
         .eq('order_id', orderId)
-        .eq('purchaser_userid', session.user.id)
         .single();
 
       if (orderError) {
@@ -39,9 +39,32 @@ export default function AgentOrderDetailPage() {
       }
 
       if (orderData) {
-        setOrder(orderData);
+        const isPurchaser = orderData.purchaser_userid === session.user.id;
+
+        if (isPurchaser) {
+          setOrder(orderData);
+        } else {
+          // If not the purchaser, check if the agent has a quote on this order
+          const { count, error: quoteError } = await supabase
+            .from('quotes')
+            .select('*', { count: 'exact', head: true })
+            .eq('order_id', orderId)
+            .eq('user_id', session.user.id);
+
+          if (quoteError) {
+            throw quoteError;
+          }
+
+          if (count > 0) {
+            setOrder(orderData);
+          } else {
+            setMessage({ type: 'error', text: '找不到訂單或無權訪問。' });
+            setLoading(false);
+            return;
+          }
+        }
       } else {
-        setMessage({ type: 'error', text: '找不到訂單或無權訪問。' });
+        setMessage({ type: 'error', text: '找不到訂單。' });
         setLoading(false);
         return; // Stop if order not found
       }
@@ -201,7 +224,7 @@ export default function AgentOrderDetailPage() {
   if (!order && !loading) {
     return (
       <div style={pageStyle}>
-        <Link to="/agent/accepted-orders" style={backLinkStyle}>返回已接訂單列表</Link>
+        <button onClick={() => navigate(-1)} style={backLinkStyle}>返回上一頁</button>
         <h2 style={h2Style}>訂單詳情</h2>
         {message.text && <p style={messageStyle(message.type)}>{message.text}</p>}
       </div>
@@ -212,7 +235,7 @@ export default function AgentOrderDetailPage() {
 
   return (
     <div style={pageStyle}>
-      <Link to="/agent/accepted-orders" style={backLinkStyle}>返回已接訂單列表</Link>
+      <button onClick={() => navigate(-1)} style={backLinkStyle}>返回上一頁</button>
       <h2 style={h2Style}>訂單詳情 #{order.order_id}</h2>
 
       {message.text && <p style={messageStyle(message.type)}>{message.text}</p>}
