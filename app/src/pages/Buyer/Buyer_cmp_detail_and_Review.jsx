@@ -26,7 +26,6 @@ export default function BuyerCompleteDetail() {
     setLoading(true);
     setMessage({ type: '', text: '' });
     try {
-      // Step 1: Fetch order details, ensuring the current user is the customer
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .select(`
@@ -35,11 +34,10 @@ export default function BuyerCompleteDetail() {
           purchaser:users!orders_purchaser_userid_fkey(userid, name, email)
         `)
         .eq('order_id', orderId)
-        .eq('customer_userid', session.user.id) // Correctly check for customer's ownership
-        .single(); // .single() is fine here as order_id is primary key
+        .eq('customer_userid', session.user.id)
+        .single();
 
       if (orderError) {
-        // If no rows found, single() throws an error. We can catch it.
         if (orderError.code === 'PGRST116') {
              setMessage({ type: 'error', text: '找不到訂單或您無權訪問此訂單。' });
              setOrder(null);
@@ -54,8 +52,6 @@ export default function BuyerCompleteDetail() {
         setLoading(false);
         return;
       }
-
-      // Step 2: Fetch associated products
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('product_name, quantity, country')
@@ -78,16 +74,11 @@ export default function BuyerCompleteDetail() {
     fetchOrderDetails();
   }, [fetchOrderDetails]);
   
-  // The handleMarkAsShipped logic might not be relevant for a buyer's view of an unaccepted order.
-  // We will keep it but it will likely not be used until a purchaser is assigned.
-
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString();
   };
   
-  // Inline styles are kept for brevity in this example.
-  // In a real app, these should be in a .css or .module.css file.
   const pageStyle = {
     maxWidth: '800px',
     margin: '3rem auto',
@@ -267,7 +258,6 @@ export default function BuyerCompleteDetail() {
             </div>
           )}
 
-          {/* 評價區塊 */}
           {order && order.purchaser && (
             <div style={{ marginTop: '2.5rem', padding: '2rem', background: '#f8f9fa', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
               <h3 style={{ color: '#007bff', marginBottom: '1rem' }}>給代購者的評價</h3>

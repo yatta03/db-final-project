@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useSupabase } from '../../context/SupabaseProvider'; // Adjusted import path
+import { useSupabase } from '../../context/SupabaseProvider';
 
 export default function The_buyer_taken() {
   const { supabase, session } = useSupabase();

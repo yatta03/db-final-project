@@ -330,6 +330,23 @@ export default function AgentOrderDetailPage() {
         </div>
       )}
       
+      <div style={detailSectionStyle}>
+            <h3 style={{ marginTop: 0, color: '#007bff' }}>付款方式</h3>
+            <div style={detailItemStyle}>
+              <label>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cashOnDelivery"
+                  defaultChecked
+                  disabled
+                  style={{ marginRight: '0.5rem' }}
+                />
+                貨到付款
+              </label>
+            </div>
+      </div>
+
       {order.order_status === 'pending' && (
         <button 
           onClick={handleMarkAsShipped} 

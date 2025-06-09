@@ -190,6 +190,10 @@ const CreateOrderPage = () => {
               required
             />
           </div>
+          <div className={styles.formGroup}>
+            <label>付款方式</label>
+              <p>貨到付款</p>
+          </div>
           {error && <p className={styles.errorText}>{error}</p>}
           <button 
             type="submit" 

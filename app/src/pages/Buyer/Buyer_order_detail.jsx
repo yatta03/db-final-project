@@ -22,7 +22,6 @@ export default function BuyerOrderDetail() {
     setLoading(true);
     setMessage({ type: '', text: '' });
     try {
-      // Step 1: Fetch order details, ensuring the current user is the customer
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .select(`
@@ -31,11 +30,10 @@ export default function BuyerOrderDetail() {
           purchaser:users!orders_purchaser_userid_fkey(userid, name, email)
         `)
         .eq('order_id', orderId)
-        .eq('customer_userid', session.user.id) // Correctly check for customer's ownership
-        .single(); // .single() is fine here as order_id is primary key
+        .eq('customer_userid', session.user.id)
+        .single();
 
       if (orderError) {
-        // If no rows found, single() throws an error. We can catch it.
         if (orderError.code === 'PGRST116') {
              setMessage({ type: 'error', text: '找不到訂單或您無權訪問此訂單。' });
              setOrder(null);
@@ -51,7 +49,6 @@ export default function BuyerOrderDetail() {
         return;
       }
 
-      // Step 2: Fetch associated products
       const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('product_name, quantity, country')
@@ -73,23 +70,18 @@ export default function BuyerOrderDetail() {
   useEffect(() => {
     fetchOrderDetails();
   }, [fetchOrderDetails]);
-  
-  // The handleMarkAsShipped logic might not be relevant for a buyer's view of an unaccepted order.
-  // We will keep it but it will likely not be used until a purchaser is assigned.
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString();
   };
   
-  // Inline styles are kept for brevity in this example.
-  // In a real app, these should be in a .css or .module.css file.
   const pageStyle = {
     maxWidth: '800px',
     margin: '3rem auto',
     padding: '2.5rem',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    backgroundColor: '#f4f7f6', // Lighter background
+    backgroundColor: '#f4f7f6',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
   };

@@ -123,7 +123,7 @@ export default function The_buyer_complete() {
   const linkStyle = {
     textDecoration: 'none',
     color: 'inherit',
-    display: 'block', // Make the whole area clickable
+    display: 'block',
   };
 
   const detailItemStyle = {
