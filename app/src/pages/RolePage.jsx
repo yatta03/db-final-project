@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useSupabase } from "../context/SupabaseProvider";
 
 export default function RolePage() {
+  const { session } = useSupabase();
   const [hoveredButton, setHoveredButton] = useState(null);
   
   const containerStyle = {
@@ -28,6 +30,14 @@ export default function RolePage() {
     fontWeight: "600",
     marginBottom: "1.8rem",
     color: "#333",
+  };
+
+  const pageStyle = {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "60vh",
   };
 
   const buttonContainerStyle = {
@@ -67,6 +77,14 @@ export default function RolePage() {
       backgroundColor: isHovered ? "#0066b3" : "#0077cc",
     };
   };
+
+  if (!session)
+    return (
+      <div className="auth-already-logged">
+        <p>未登入！</p>
+        <Link to={"/user/signIn"}>登入</Link>
+      </div>
+    );
 
   return (
     <div style={containerStyle}>

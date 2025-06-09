@@ -125,6 +125,13 @@ export default function OrderDetailPage({ role }) {
     }
   }, [orderId]);
 
+  if (!session)
+    return (
+      <div className="auth-already-logged">
+        <p>未登入！</p>
+        <Link to={"/user/signIn"}>登入</Link>
+      </div>
+    );
   if (loading) return <p>loading...</p>;
   if (!orderData) return <p>no data</p>;
   if (error) return <p>{JSON.stringify(error)}</p>;
