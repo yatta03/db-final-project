@@ -80,9 +80,9 @@ export default function RolePage() {
 
   if (!session)
     return (
-      <div style={pageStyle}>
+      <div className="auth-already-logged">
         <p>未登入！</p>
-        <Link to={"/user/signIn"}>Sign In</Link>
+        <Link to={"/user/signIn"}>登入</Link>
       </div>
     );
 

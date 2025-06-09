@@ -127,17 +127,9 @@ export default function OrderDetailPage({ role }) {
 
   if (!session)
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "80vh",
-        }}
-      >
+      <div className="auth-already-logged">
         <p>未登入！</p>
-        <Link to={"/user/signIn"}>Sign In</Link>
+        <Link to={"/user/signIn"}>登入</Link>
       </div>
     );
   if (loading) return <p>loading...</p>;
