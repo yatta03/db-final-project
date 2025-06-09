@@ -16,6 +16,7 @@ import AgentCompletedOrdersPage from "./pages/agent/AgentCompletedOrdersPage";
 import AgentPublicProfilePage from "./pages/agent/AgentPublicProfilePage";
 import AgentBrowseOrdersPage from "./pages/agent/AgentBrowseOrdersPage";
 
+import BuyerCompleteDetail from "./pages/Buyer/Buyer_cmp_detail";
 import BuyerOrderDetail from "./pages/Buyer/Buyer_order_detail";
 import The_buyer_profile from "./pages/Buyer/Buyer_profile";
 import The_buyer_taken from "./pages/Buyer/Buyer_taken";
@@ -53,6 +54,7 @@ function App() {
             <Route path="/buyer/profile" element={<The_buyer_profile />} />
             <Route path="/buyer/taken-orders" element={<The_buyer_taken />} />
             <Route path="/buyer/complete-orders" element={<The_buyer_complete />} />
+            <Route path="/buyer/complete/:orderId" element={<BuyerCompleteDetail />} />
 
             {/* Agent-specific dynamic public page (less specific, so placed last) */}
             <Route path="/agent/:userId" element={<AgentPublicProfilePage />} />

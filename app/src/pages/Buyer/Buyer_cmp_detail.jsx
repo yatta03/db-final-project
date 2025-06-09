@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSupabase } from '../../context/SupabaseProvider';
 
-export default function BuyerOrderDetail() {
+export default function BuyerCompleteDetail() {
   const { supabase, session } = useSupabase();
   const { orderId } = useParams();
   const navigate = useNavigate();
@@ -190,7 +190,7 @@ export default function BuyerOrderDetail() {
   
   return (
     <div style={pageStyle}>
-      <Link to="/buyer/taken-orders" style={backLinkStyle}>返回已被接取訂單列表</Link>
+      <Link to="/buyer/complete-orders" style={backLinkStyle}>返回已完成訂單列表</Link>
       
       {message.text && !order && <p style={messageStyle(message.type)}>{message.text}</p>}
 
@@ -234,13 +234,8 @@ export default function BuyerOrderDetail() {
           ) : (
             <div style={detailSectionStyle}>
               <h3 style={{ marginTop: 0, color: '#007bff' }}>代購者資訊</h3>
-              <p style={detailItemStyle}>尚未有代購者承接此訂單。</p>
+              <p style={detailItemStyle}>尚未有完成訂單。</p>
             </div>
-          )}
-          {order.order_status === 'in_progress' && (
-            <button style={markReceivedButtonStyle} onClick={handleMarkAsReceived}>
-              標記為已收貨
-            </button>
           )}
         </>
       )}
