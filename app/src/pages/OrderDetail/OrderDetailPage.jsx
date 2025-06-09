@@ -163,6 +163,7 @@ export default function OrderDetailPage({ role }) {
                 onRemove={removeQuote}
                 onReject={rejectQuote}
                 onAccept={acceptQuote}
+                role={role}
               />
             </div>
           </div>
