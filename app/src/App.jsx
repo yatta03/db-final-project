@@ -16,7 +16,7 @@ import AgentCompletedOrdersPage from "./pages/agent/AgentCompletedOrdersPage";
 import AgentPublicProfilePage from "./pages/agent/AgentPublicProfilePage";
 import AgentBrowseOrdersPage from "./pages/agent/AgentBrowseOrdersPage";
 
-import BuyerCompleteDetail from "./pages/Buyer/Buyer_cmp_detail";
+import BuyerCompleteDetail from "./pages/Buyer/Buyer_cmp_detail_and_Review";
 import BuyerOrderDetail from "./pages/Buyer/Buyer_order_detail";
 import The_buyer_profile from "./pages/Buyer/Buyer_profile";
 import The_buyer_taken from "./pages/Buyer/Buyer_taken";

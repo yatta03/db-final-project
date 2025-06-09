@@ -11,6 +11,10 @@ export default function BuyerCompleteDetail() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [reviewContent, setReviewContent] = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewMessage, setReviewMessage] = useState("");
+  const [reviewMessageType, setReviewMessageType] = useState("");
 
   const fetchOrderDetails = useCallback(async () => {
     if (!session?.user || !orderId) {
@@ -184,6 +188,31 @@ export default function BuyerCompleteDetail() {
     }
   };
 
+  const handleSubmitReview = async () => {
+    if (!order || !order.purchaser || !session?.user) return;
+    if (!reviewContent.trim()) return;
+    setReviewSubmitting(true);
+    setReviewMessage("");
+    setReviewMessageType("");
+    try {
+      const { error } = await supabase.from('reviews').insert({
+        review_content: reviewContent.trim(),
+        purchaser_user_id: order.purchaser.userid,
+        reviewer_user_id: session.user.id,
+        publish_date_time: new Date().toISOString(),
+      });
+      if (error) throw error;
+      setReviewMessage("評價送出成功！");
+      setReviewMessageType("success");
+      setReviewContent("");
+    } catch (err) {
+      setReviewMessage("送出失敗：" + err.message);
+      setReviewMessageType("error");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
+
   if (loading) {
     return <div style={{...pageStyle, textAlign: 'center'}}><p>正在載入訂單詳情...</p></div>;
   }
@@ -234,7 +263,29 @@ export default function BuyerCompleteDetail() {
           ) : (
             <div style={detailSectionStyle}>
               <h3 style={{ marginTop: 0, color: '#007bff' }}>代購者資訊</h3>
-              <p style={detailItemStyle}>尚未有完成訂單。</p>
+              <p style={detailItemStyle}>尚未有已完成訂單。</p>
+            </div>
+          )}
+
+          {/* 評價區塊 */}
+          {order && order.purchaser && (
+            <div style={{ marginTop: '2.5rem', padding: '2rem', background: '#f8f9fa', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+              <h3 style={{ color: '#007bff', marginBottom: '1rem' }}>給代購者的評價</h3>
+              <textarea
+                style={{ width: '100%', minHeight: '80px', fontSize: '1rem', padding: '0.75rem', borderRadius: '6px', border: '1px solid #ced4da', marginBottom: '1rem' }}
+                placeholder="請輸入您的評價..."
+                value={reviewContent}
+                onChange={e => setReviewContent(e.target.value)}
+                disabled={reviewSubmitting}
+              />
+              <button
+                style={{ background: '#28a745', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.75rem 2rem', fontSize: '1rem', fontWeight: '600', cursor: 'pointer' }}
+                onClick={handleSubmitReview}
+                disabled={reviewSubmitting || !reviewContent.trim()}
+              >
+                {reviewSubmitting ? '送出中...' : '送出評價'}
+              </button>
+              {reviewMessage && <p style={{ marginTop: '1rem', color: reviewMessageType === 'success' ? '#28a745' : '#dc3545', textAlign: 'center' }}>{reviewMessage}</p>}
             </div>
           )}
         </>
