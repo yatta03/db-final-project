@@ -31,6 +31,7 @@ export default function AgentAcceptedOrdersPage() {
           `)
           .eq('purchaser_userid', session.user.id)
           .eq('is_order_accepted', true)
+          .in('order_status', ['pending', 'in_progress'])
           .order('created_at', { ascending: false });
 
         if (error) {
