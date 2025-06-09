@@ -27,7 +27,7 @@ export default function The_buyer_complete() {
             order_status,
             created_at,
             amount,
-            customer:users!orders_customer_userid_fkey(name)
+            purchaser:users!orders_purchaser_userid_fkey(name)
           `)
           .eq('customer_userid', session.user.id)
           .eq('order_status', 'completed')
@@ -155,9 +155,9 @@ export default function The_buyer_complete() {
         <ul style={listStyle}>
           {completedOrders.map(order => (
             <li key={order.order_id} style={listItemStyle}>
-              <Link to={`/buyer/order/${order.order_id}`} style={linkStyle}>
+              <Link to={`/buyer/complete/${order.order_id}`} style={linkStyle}>
                 <h3 style={{ marginTop: 0, marginBottom: '1rem', color: '#007bff' }}>訂單編號 #{order.order_id}</h3>
-                <p style={detailItemStyle}><span style={detailLabelStyle}>客戶姓名：</span>{order.customer?.name || 'N/A'}</p>
+                <p style={detailItemStyle}><span style={detailLabelStyle}>代購者姓名：</span>{order.purchaser?.name || 'N/A'}</p>
                 <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額：</span>${order.amount ?? 'N/A'}</p>
                 <p style={detailItemStyle}><span style={detailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
                 <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態：</span>{order.order_status}</p>
