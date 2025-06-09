@@ -125,6 +125,21 @@ export default function OrderDetailPage({ role }) {
     }
   }, [orderId]);
 
+  if (!session)
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "80vh",
+        }}
+      >
+        <p>未登入！</p>
+        <Link to={"/user/signIn"}>Sign In</Link>
+      </div>
+    );
   if (loading) return <p>loading...</p>;
   if (!orderData) return <p>no data</p>;
   if (error) return <p>{JSON.stringify(error)}</p>;
