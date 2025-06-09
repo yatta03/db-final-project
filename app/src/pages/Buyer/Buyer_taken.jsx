@@ -31,6 +31,7 @@ export default function The_buyer_taken() {
           `)
           .eq('customer_userid', session.user.id)
           .eq('is_order_accepted', true)
+          .neq('order_status', 'completed')
           .order('created_at', { ascending: false });
 
         if (error) {
@@ -65,7 +66,7 @@ export default function The_buyer_taken() {
     margin: '1rem auto',
     padding: '2.5rem',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    backgroundColor: '#C0C0C0',
+    backgroundColor: '#F4F7F6',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0,0,0, 0.1)',
   };
@@ -183,12 +184,6 @@ export default function The_buyer_taken() {
                   <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單日期：</span>{formatDate(order.created_at)}</p>
                   {order.amount !== null && order.amount !== undefined && (
                     <p style={orderDetailStyle}><span style={orderDetailLabelStyle}>訂單金額：</span>${order.amount}</p>
-                  )}
-                  {order.status === 'pending' && (
-                    <button onClick={() => handlePayment(order.order_id)}>付款</button>
-                  )}
-                  {order.status === '已付款' && (
-                    <button onClick={() => handleReceived(order.order_id)}>已收貨</button>
                   )}
                 </div>
               </Link>

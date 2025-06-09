@@ -106,7 +106,7 @@ export default function The_buyer_profile() {
     margin: '1rem auto',
     padding: '2.5rem',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    backgroundColor: '#C0C0C0',
+    backgroundColor: '#F4F7F6',
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgb(0,0,0)',
   };

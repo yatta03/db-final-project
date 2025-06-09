@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useSupabase } from '../../context/SupabaseProvider';
 
 export default function BuyerOrderDetail() {
   const { supabase, session } = useSupabase();
   const { orderId } = useParams();
+  const navigate = useNavigate();
   
   const [order, setOrder] = useState(null);
   const [products, setProducts] = useState([]);
@@ -88,7 +89,7 @@ export default function BuyerOrderDetail() {
     margin: '3rem auto',
     padding: '2.5rem',
     fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    backgroundColor: '#ffffff', // Lighter background
+    backgroundColor: '#f4f7f6', // Lighter background
     borderRadius: '8px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
   };
@@ -144,13 +145,52 @@ export default function BuyerOrderDetail() {
       marginBottom: '1.5rem',
   };
 
+  const markReceivedButtonStyle = {
+    marginTop: '1.5rem',
+    marginLeft: 0,
+    backgroundColor: '#28A745',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '6px',
+    padding: '1rem 2.5rem',
+    fontSize: '1.1rem',
+    fontWeight: '600',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    cursor: 'pointer',
+    zIndex: 1,
+    display: 'block',
+    position: 'relative',
+    left: 0,
+    bottom: 0
+  };
+
+  const handleMarkAsReceived = async () => {
+    if (!order) return;
+    try {
+      setLoading(true);
+      const { error } = await supabase
+        .from('orders')
+        .update({ order_status: 'completed' })
+        .eq('order_id', order.order_id);
+      if (error) throw error;
+      setMessage({ type: 'success', text: '訂單已標記為已收貨！' });
+      setTimeout(() => {
+        navigate('/buyer/taken-orders');
+      }, 800);
+    } catch (error) {
+      setMessage({ type: 'error', text: '更新訂單狀態失敗：' + error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return <div style={{...pageStyle, textAlign: 'center'}}><p>正在載入訂單詳情...</p></div>;
   }
   
   return (
     <div style={pageStyle}>
-      <Link to="/buyer/posted-orders" style={backLinkStyle}>返回已發佈訂單列表</Link>
+      <Link to="/buyer/taken-orders" style={backLinkStyle}>返回已被接訂單列表</Link>
       
       {message.text && !order && <p style={messageStyle(message.type)}>{message.text}</p>}
 
@@ -192,10 +232,15 @@ export default function BuyerOrderDetail() {
               <p style={detailItemStyle}><span style={detailLabelStyle}>Email:</span> {order.purchaser.email || 'N/A'}</p>
             </div>
           ) : (
-             <div style={detailSectionStyle}>
-                <h3 style={{ marginTop: 0, color: '#007bff' }}>代購者資訊</h3>
-                <p style={detailItemStyle}>尚未有代購者承接此訂單。</p>
-             </div>
+            <div style={detailSectionStyle}>
+              <h3 style={{ marginTop: 0, color: '#007bff' }}>代購者資訊</h3>
+              <p style={detailItemStyle}>尚未有代購者承接此訂單。</p>
+            </div>
+          )}
+          {order.order_status === 'in_progress' && (
+            <button style={markReceivedButtonStyle} onClick={handleMarkAsReceived}>
+              標記為已收貨
+            </button>
           )}
         </>
       )}
