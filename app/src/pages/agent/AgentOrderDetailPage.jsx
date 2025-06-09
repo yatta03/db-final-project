@@ -221,12 +221,9 @@ export default function AgentOrderDetailPage() {
         <h3 style={{ marginTop: 0, color: '#007bff' }}>基本資訊</h3>
         <p style={detailItemStyle}><span style={detailLabelStyle}>訂單編號:</span> {order.order_id}</p>
         <p style={detailItemStyle}><span style={detailLabelStyle}>訂單狀態:</span> {order.order_status}</p>
-        <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額:</span> ¥{order.amount != null ? order.amount.toFixed(2) : 'N/A'}</p>
+        <p style={detailItemStyle}><span style={detailLabelStyle}>訂單金額:</span> ${order.amount != null ? order.amount.toFixed(2) : 'N/A'}</p>
         <p style={detailItemStyle}><span style={detailLabelStyle}>創建時間:</span> {formatDate(order.created_at)}</p>
         <p style={detailItemStyle}><span style={detailLabelStyle}>接受狀態:</span> {order.is_order_accepted ? '已接受' : '待接受'}</p>
-        {/* Add other relevant Order fields here */}
-        <p style={detailItemStyle}><span style={detailLabelStyle}>要求送達日期:</span> {order.request_delivery_date ? formatDate(order.request_delivery_date) : 'N/A'}</p>
-        <p style={detailItemStyle}><span style={detailLabelStyle}>備註:</span> {order.remarks || '無'}</p>
       </div>
 
       {products.length > 0 && (

@@ -18,6 +18,7 @@ export default function AgentBrowseOrdersPage() {
         .select(`
           order_id,
           created_at,
+          amount,
           users:customer_userid ( name ),
           products ( product_name, quantity, country )
         `)
@@ -124,6 +125,7 @@ export default function AgentBrowseOrdersPage() {
                 <div style={cardContentStyle}>
                     <h3 style={cardTitleStyle}>訂單 #{order.order_id}</h3>
                     <p style={detailItemStyle}><strong>客戶名稱：</strong> {order.users?.name || 'N/A'}</p>
+                    <p style={detailItemStyle}><strong>訂單金額：</strong> ${order.amount != null ? order.amount.toFixed(2) : 'N/A'}</p>
                     {order.products && order.products.length > 0 ? order.products.map((product, index) => (
                         <div key={index}>
                             <p style={detailItemStyle}><strong>商品名稱：</strong> {product.product_name}</p>
