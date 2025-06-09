@@ -13,6 +13,15 @@ export default function AgentBrowseOrdersPage() {
       setLoading(true);
       setError(null);
 
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        setError('您必須登入才能查看待接訂單。');
+        setLoading(false);
+        setOrders([]);
+        return;
+      }
+
       const { data, error: fetchError } = await supabase
         .from('orders')
         .select(`
@@ -23,6 +32,7 @@ export default function AgentBrowseOrdersPage() {
           products ( product_name, quantity, country )
         `)
         .is('purchaser_userid', null)
+        .neq('customer_userid', user.id)
         .order('created_at', { ascending: false });
 
       if (fetchError) {
