@@ -71,7 +71,7 @@ export default function RolePage() {
   return (
     <div style={containerStyle}>
       <div style={cardStyle}>
-        <h1 style={titleStyle}>请选择身份</h1>
+        <h1 style={titleStyle}>請選擇身分</h1>
         <div style={buttonContainerStyle}>
           <Link 
             to="/agent/browse-orders" 
@@ -79,7 +79,7 @@ export default function RolePage() {
             onMouseEnter={() => setHoveredButton("agent")}
             onMouseLeave={() => setHoveredButton(null)}
           >
-            代购者
+            代購者
           </Link>
           <Link 
             to="/buyer/posted-orders" 
@@ -87,7 +87,7 @@ export default function RolePage() {
             onMouseEnter={() => setHoveredButton("buyer")}
             onMouseLeave={() => setHoveredButton(null)}
           >
-            买家
+            買家
           </Link>
         </div>
       </div>
