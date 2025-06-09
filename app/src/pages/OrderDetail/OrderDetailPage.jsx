@@ -138,9 +138,11 @@ export default function OrderDetailPage({ role }) {
 
   return (
     <div className="order-detail-page">
-      <Link to={`/${role}/browse-orders`} className="back-to-list-btn">
-        返回訂單列表
-      </Link>
+      {role === 'buyer' ? (
+        <Link to={`/${role}/posted-orders`} className="back-to-list-btn">返回訂單列表</Link>
+      ) : (
+        <Link to={`/${role}/browse-orders`} className="back-to-list-btn">返回訂單列表</Link>
+      )}
 
       <div className="top-section">
         <OrderDetail orderData={orderData} />
