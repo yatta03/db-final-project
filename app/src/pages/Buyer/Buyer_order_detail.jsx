@@ -238,7 +238,6 @@ export default function BuyerOrderDetail() {
             </div>
           )}
 
-          {/* 付款方式區塊 */}
           <div style={detailSectionStyle}>
             <h3 style={{ marginTop: 0, color: '#007bff' }}>付款方式</h3>
             <div style={detailItemStyle}>
