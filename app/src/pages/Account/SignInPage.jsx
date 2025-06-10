@@ -2,11 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSupabase } from "../../context/SupabaseProvider";
 import useForm from "../../hooks/useForm";
 import AuthForm from "../../components/AuthForm/AuthForm";
-import { validateSingUp } from "../../utils/validators";
+import { validateSignIn } from "../../utils/validators";
 import "./SignInPage.css";
 
 export default function SignInPage() {
-  const { form, errors, handleChange, validateForm } = useForm({ email: "", password: "" }, validateSingUp);
+  const { form, errors, handleChange, validateForm } = useForm({ email: "", password: "" }, validateSignIn);
   const navigate = useNavigate();
   const { supabase, session } = useSupabase();
 

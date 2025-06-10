@@ -8,6 +8,14 @@ export const validateSingUp = (form) => {
   return errors;
 };
 
+export const validateSignIn = (form) => {
+  const errors = {};
+  if (!form.email) errors.email = "email required";
+  if (!form.password) errors.password = "password required";
+
+  return errors;
+};
+
 export const validateQuotePost = (form) => {
   const errors = {};
   if (!form.price) errors.price = "請填入報價金額";
