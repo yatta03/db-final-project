@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSupabase } from '../../context/SupabaseProvider';
+import styles from './AgentBrowseOrdersPage.module.css';
 
 export default function AgentBrowseOrdersPage() {
   const { supabase } = useSupabase();
@@ -46,97 +47,41 @@ export default function AgentBrowseOrdersPage() {
     fetchOrders();
   }, [supabase]);
 
-  const pageStyle = {
-    maxWidth: '1200px',
-    margin: '1rem auto',
-    padding: '2rem',
-    fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-  };
-
-  const headerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '2rem',
-    borderBottom: '1px solid #dee2e6',
-    paddingBottom: '1rem',
-  };
-
-  const h2Style = {
-    color: '#343a40',
-    fontWeight: '600',
-  };
-
-  const orderGridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-    gap: '1.5rem',
-  };
-
-  const cardStyle = {
-    background: '#ffffff',
-    borderRadius: '8px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-    padding: '1.5rem',
-    display: 'flex',
-    flexDirection: 'column',
-    transition: 'transform 0.2s, box-shadow 0.2s',
-    height: '100%',
-  };
-
-  const cardLinkStyle = {
-    textDecoration: 'none',
-    color: 'inherit',
-    height: '100%',
-  };
-  
-  const cardContentStyle = {
-    flexGrow: 1,
-  };
-
-  const detailItemStyle = {
-    marginBottom: '0.75rem',
-    fontSize: '0.95rem',
-  };
-
   if (loading) {
-    return <div style={{...pageStyle, textAlign: 'center'}}><p>正在載入待接訂單...</p></div>;
+    return <div className={styles.pageContainer}><p>正在載入待接訂單...</p></div>;
   }
 
   if (error) {
-    return <div style={{...pageStyle, textAlign: 'center', color: '#dc3545'}}><p>{error}</p></div>;
+    return <div className={styles.pageContainer}><p className={styles.errorText}>{error}</p></div>;
   }
 
   return (
-    <div style={pageStyle}>
-      <header style={headerStyle}>
-        <h2 style={h2Style}>待接訂單瀏覽</h2>
+    <div className={styles.pageContainer}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>待接訂單瀏覽</h1>
       </header>
 
-      {orders.length === 0 ? (
-        <p style={{ textAlign: 'center', marginTop: '3rem' }}>目前沒有待處理的訂單。</p>
-      ) : (
-        <div style={orderGridStyle}>
-          {orders.map((order) => (
-            <Link to={`/agent/browse/order/${order.order_id}`} key={order.order_id} style={cardLinkStyle}>
-              <div style={cardStyle} 
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.1)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)'; }}>
-                <div style={cardContentStyle}>
-                    <p style={detailItemStyle}><strong>客戶名稱：</strong> {order.users?.name || 'N/A'}</p>
-                    {order.products && order.products.length > 0 ? order.products.map((product, index) => (
-                        <div key={index}>
-                            <p style={detailItemStyle}><strong>商品名稱：</strong> {product.product_name}</p>
-                            <p style={detailItemStyle}><strong>數量：</strong> {product.quantity}</p>
-                            <p style={detailItemStyle}><strong>國家：</strong> {product.country}</p>
-                        </div>
-                    )) : <p>沒有商品資訊</p>}
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+      <main>
+        {orders.length === 0 ? (
+          <p className={styles.noOrdersText}>目前沒有待處理的訂單。</p>
+        ) : (
+          <div className={styles.ordersGrid}>
+            {orders.map((order) => (
+              <Link to={`/agent/browse/order/${order.order_id}`} key={order.order_id} className={styles.orderCard}>
+                <h2>訂單編號 #{order.order_id}</h2>
+                <p><strong>客戶名稱：</strong> {order.users?.name || 'N/A'}</p>
+                {order.products && order.products.length > 0 ? order.products.map((product, index) => (
+                    <div key={index}>
+                        <p><strong>商品名稱：</strong> {product.product_name}</p>
+                        <p><strong>數量：</strong> {product.quantity}</p>
+                        <p><strong>國家：</strong> {product.country}</p>
+                    </div>
+                )) : <p>沒有商品資訊</p>}
+              </Link>
+            ))}
+          </div>
+        )}
+      </main>
     </div>
   );
 } 

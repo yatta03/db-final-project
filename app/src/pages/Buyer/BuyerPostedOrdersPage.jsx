@@ -61,7 +61,6 @@ const BuyerPostedOrdersPage = () => {
             {orders.map((order) => (
               <div key={order.order_id} className={styles.orderCard}>
                 <h2>訂單編號: {order.order_id}</h2>
-                <p>金額: ${order.amount}</p>
                 <p>建立時間: {new Date(order.created_at).toLocaleDateString()}</p>
                 <Link to={`/buyer/browse/order/${order.order_id}`} className={styles.detailsButton}>
                   查看詳情
